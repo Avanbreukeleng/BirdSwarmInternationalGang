@@ -7,10 +7,7 @@ import pickle
 # from objects.mesh import Mesh
 # from objects.element import Element
 
-from structure import geometry
-
-
-def Swarm(inp):
+# from structure import geometry
     # =============================================================================
     #  PHY571 Numerical Physics Project
     # =============================================================================
@@ -26,89 +23,28 @@ def Swarm(inp):
     # November 2023 & December 2023
     # ==============================End of Preamble================================
 
-    # --------------------------------------------------------------------------
-    # 0. User Input
-    # --------------------------------------------------------------------------
-    assembly = Assembly(inp)
-
-    # --------------------------------------------------------------------------
-    # 1. Input Check
-    # --------------------------------------------------------------------------
-    if PLOT:
-        # pass
-        # UNCOMMENT THE LINE BELOW and remove 'pass' above
-        assembly.plot_input()
-
-    # --------------------------------------------------------------------------
-    # 2. Creation of Parts - Plot for check by user
-    # --------------------------------------------------------------------------
-    # Create mesh
-    assembly.mesh = Mesh(assembly)
-    # print(assembly.getmembers())
-    # print(vars(assembly))
-
-    # name = input('Desired file name identification?\t')
-    # with open(name + 'pickle_assembly.csv', 'wb') as pickle_out:
-    #     pickle.dump(assembly, pickle_out)
-    #
-    if PLOT:
-        # Plot mesh
-
-        # UNCOMMENT THE LINE BELOW
-        assembly.mesh.plot_mesh()
-
-        # Show the user the mesh overlaid over the geometry
-        assembly.mesh.plot_mesh(False)
-
-        # UNCOMMENT THE LINE BELOW
-        assembly.plot_input()
-
-        # Pause for user to do visual inspection of structure and mesh
-        input('Please inspect the mesh shown in figures 1 and 2 and 3. \
-            They may also be saved in the working path as "mesh_1.png", "mesh_2.png", and "mesh_3.png", if so configured. \
-            Press enter to continue.')
-
-    # --------------------------------------------------------------------------
-    # 3. Creation of boids
-    # --------------------------------------------------------------------------
-    # Assign properties
-    assembly.mesh.assign_element_properties()
-
-    # Creation of Elements
-    for ix in range(assembly.mesh.mesh['nElements']):
-        # for each element, generate local properties
-        element = Element(assembly, ix)
-        # rewrite the local mesh with the mesh that now has the element properties included
-        assembly.mesh = element.assembly.mesh
 
 
+class Bird():
 
-    # --------------------------------------------------------------------------
-    # 4. Performing the simulation
-    # TODO: create step function
+    def init_vector(self, seed, N):
+        np.random.seed(seed)
+        posvector = np.random.rand(N, 2)
+        theta = np.random.uniform(0, 2*np.pi,N)
+        vector = np.hstack((posvector, theta))
+        return vector
+    
+    def __init__(self,seed,vel,N,R,L,eta,dt):
+        self.vector = self.init_vector(seed,N)   # This is the NStepsx3 array that stores x,y and theta value at each step
+                                                 #At each step, add another layer to the array (in 3D)
+        self.velocity = vel                      # Constant norm of velocity for all birds
+        self.R = R                               # Radius of influence of each boid
+        self.L = L                               # Size of the world
+        self.eta = eta                           # Interval of noise in theta
+        self.dt = dt                             # Constant time step
+        self.N = N
 
-    # --------------------------------------------------------------------------
-    o = assembly.output
-    # print('Assembly output content\n', o.keys())
-    # print(o['inactiveDF'])
-
-
-    # --------------------------------------------------------------------------
-    # 5. Plot results
-    # TODO: improve plots to ease comparison, etc.
-
-    # --------------------------------------------------------------------------
-
-    # UNCOMMENT THE LINE BELOW
-    assembly.plot_output()
-
-    # --------------------------------------------------------------------------
-    # 6. Save simulation results
-
-    # TODO: fill the block (consider CSV, pickling)
-    # --------------------------------------------------------------------------
-    assembly.save_output()
-    return assembly.output
+        self.update()
 
 
 if __name__ == '__main__':
@@ -116,7 +52,12 @@ if __name__ == '__main__':
     # PLOT = True
 
     # Create input geometry from TOML file
-    inp = geometry('values.toml')
+    # inp = geometry('values.toml')
 
     # Run simulation
     output = Swarm(inp)
+
+
+    # def Swarm(inp):
+    #
+    # return output
