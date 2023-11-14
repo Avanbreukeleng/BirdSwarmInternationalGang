@@ -2,12 +2,16 @@
 
 # import csv
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+
 # import pickle
 # from objects.assembly import Assembly
 # from objects.mesh import Mesh
 # from objects.element import Element
 
 # from structure import geometry
+
     # =============================================================================
     #  PHY571 Numerical Physics Project
     # =============================================================================
@@ -24,7 +28,6 @@ import numpy as np
     # ==============================End of Preamble================================
 
 
-
 class Bird():
 
     def init_vector(self, seed, N):
@@ -34,7 +37,7 @@ class Bird():
         vector = np.hstack((posvector, theta))
         return vector
     
-    def __init__(self,seed,vel,N,R,L,eta,dt):
+    def __init__(self,seed,vel,N,R,L,eta,dt,Nruns):
         self.vector = self.init_vector(seed,N)   # This is the NStepsx3 array that stores x,y and theta value at each step
                                                  #At each step, add another layer to the array (in 3D)
         self.velocity = vel                      # Constant norm of velocity for all birds
@@ -43,9 +46,10 @@ class Bird():
         self.eta = eta                           # Interval of noise in theta
         self.dt = dt                             # Constant time step
         self.N = N
+        self.Nruns = Nruns
+        self.rho = self.N/(self.L)**2
 
         self.update()
-
 
 
     def evolve(self):
@@ -115,10 +119,11 @@ class Bird():
         #TODO plot v_a as function of rho and eta to see the phase transition
 
     def update(self):
-    for i in range(0, 100) #i is the loop variable of the timestep, hard capped at 100 for now
-        self.evolve()
-        self.new_theta()
-    #TODO Lastly, check if the dispersion of average theta is close to the noise ;
+        for i in range(self.Nruns) #i is the loop variable of the timestep, hard capped at 10 for now
+            self.evolve()
+            self.new_theta()
+        #TODO Lastly, check if the dispersion of average theta is close to the noise ;
+        self.va = order_parameter_behaviour()
         #if dispersion in range()
         #Timestep = i
         #print(Timestep)
