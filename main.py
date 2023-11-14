@@ -51,7 +51,7 @@ class Bird():
         self.eta = eta                           # Interval of noise in theta
         self.dt = dt                             # Constant time step
         self.N = N
-        self.Nruns = Nruns
+        self.Nsteps = Nsteps
         self.rho = self.N/(self.L)**2
 
         self.update()
@@ -158,9 +158,9 @@ if __name__ == '__main__':
     L = 10
     eta = np.pi/4
     dt = 1
-    runs = 10
+    Nruns = 10
     # Run simulation
-    swarm = Bird(seed,vel,N,R,L,eta,dt,runs)
+    swarm = Bird(seed,vel,N,R,L,eta,dt,Nruns)
 
     # Plots and animations:
     # Set to True to animate swarm motion
