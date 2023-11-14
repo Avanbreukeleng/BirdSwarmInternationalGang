@@ -13,7 +13,7 @@ InParam = np.array(1, 0.033, 1, 1, 10, np.pi/4, 1, 10) #first set of parameters
 # TODO compute density and eta from this matrix
 #
 
-
+# NOTICE: phase_transition_parameters is an array [v_a,rho, ]
 def plot_phase_transition(self.phase_transition_parameters):
 # Investigate the behaviour of order parameter v_a as a function of density and eta
 fig, ax = plt.subplots()
