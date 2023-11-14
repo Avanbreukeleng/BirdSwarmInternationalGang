@@ -108,7 +108,11 @@ class Bird():
     #
     #     diff = np.min(np.abs(theta_avg_last-theta_avg_second_to_last),np.abs(theta_avg_last-theta_avg_second_to_last-2*np.pi))
 
-
+    def order_parameter_behaviour(self):
+        # Absolut value of the average normslized velocity is the order parameter of the system and checking its behaviour determines the phase transition
+        v_a = np.sqrt((np.matrix.sum(np.cos(self.vector[-1][:][2])))**2 + (np.matrix.sum(np.sin(self.vector[-1][:][2])))**2)/self.N
+        return v_a
+        #TODO plot v_a as function of rho and eta to see the phase transition
 
     def update(self):
     for i in range(0, 100) #i is the loop variable of the timestep, hard capped at 100 for now
@@ -134,7 +138,7 @@ def animate(vector):
     ax.set_ylim(0, L)
     anim = animation.FuncAnimation(fig, make_step(i), interval=1, blit=False)
 
-def Plot():
+def Phase_():
 
 
 
