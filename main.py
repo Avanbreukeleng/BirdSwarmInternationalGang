@@ -2,7 +2,7 @@
 
 # import csv
 import numpy as np
-import pickle
+# import pickle
 # from objects.assembly import Assembly
 # from objects.mesh import Mesh
 # from objects.element import Element
@@ -89,7 +89,7 @@ class Bird():
         n = np.count_nonzero(Neighbours, axis=1)
         avg_theta_r_cos = np.matrix.sum(np.cos(Neighbours), axis=1) / n
         avg_theta_r_sin = np.matrix.sum(np.sin(Neighbours), axis=1) / n
-        theta_avg_r = np.atan2(avg_theta_r_sin, avg_theta_r_cos)
+        theta_avg_r = np.atan2(avg_theta_r_sin, avg_theta_r_cos) ### WARNING arctan2 gives 0 or pi in the case of two exactly opposite thetas
         # TODO make sure there are no thetas going over 2pi and under 0
         self.vector[-1][:][2] = theta_avg_r + np.random.uniform(-self.eta / 2, self.eta / 2, size=np.size(theta_avg_r))
 
