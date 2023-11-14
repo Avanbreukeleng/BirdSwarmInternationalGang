@@ -140,7 +140,7 @@ class Bird():
 if __name__ == '__main__':
     seed = 1
     vel = 0.033
-    N = 1
+    N = 2
     R = 1
     L = 10
     eta = np.pi/4
@@ -166,7 +166,7 @@ if __name__ == '__main__':
         # TODO understand comma?
         ax.set_xlim(0, L)
         ax.set_ylim(0, L)
-        anim = animation.FuncAnimation(fig, make_step, interval=1, blit=False)
+        anim = animation.FuncAnimation(fig, make_step, interval=1, blit=True)
 
 
     # Create input geometry from TOML file
