@@ -128,26 +128,13 @@ class Bird():
             self.evolve()
             self.new_theta()
         #TODO Lastly, check if the dispersion of average theta is close to the noise ;
-        self.va = self.order_parameter_behaviour()
+        self.va = self.order_parameter_calculation()
         #if dispersion in range()
         #Timestep = i
         #print(Timestep)
         #break
 
-def make_step(i):
-    # swarm.step(dt)
-    line.set_data(swarm.vector[i][:,0], swarm.vector[i][:,1])
-    return line
 
-
-def animate(vector):
-    fig = plt.figure()
-    ax = fig.add_subplot(111, aspect='equal')
-    line = ax.plot([], [], 'bo', ms=25)
-    # TODO understand comma?
-    ax.set_xlim(0, L)
-    ax.set_ylim(0, L)
-    anim = animation.FuncAnimation(fig, make_step, interval=1, blit=False)
 
 
 if __name__ == '__main__':
@@ -166,8 +153,21 @@ if __name__ == '__main__':
     # Set to True to animate swarm motion
     ANIMATE = True
 
+
+    def make_step(i):
+        # swarm.step(dt)
+        line.set_data(swarm.vector[i][:, 0], swarm.vector[i][:, 1])
+        return line,
+
     if ANIMATE:
-        animate(swarm.vector)
+        fig = plt.figure()
+        ax = fig.add_subplot(111, aspect='equal')
+        line, = ax.plot([], [], 'bo', ms=25)
+        # TODO understand comma?
+        ax.set_xlim(0, L)
+        ax.set_ylim(0, L)
+        anim = animation.FuncAnimation(fig, make_step, interval=1, blit=False)
+
 
     # Create input geometry from TOML file
     # inp = geometry('values.toml')

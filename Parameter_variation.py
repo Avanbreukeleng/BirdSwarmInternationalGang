@@ -16,16 +16,16 @@ InParam = np.array(1, 0.033, 1, 1, 10, np.pi/4, 1, 10) #first set of parameters
 # NOTICE: phase_transition_parameters is an array [v_a,rho, ]
 def plot_phase_transition(self.phase_transition_parameters):
 # Investigate the behaviour of order parameter v_a as a function of density and eta
-fig, ax = plt.subplots()
-plt.title("Order Parameter vs Density")
-plt.xlabel("Density")
-plt.ylabel("Order Parameter")
-plt.plot(self.phase_transition_parameters[:,1],self.phase_transition_parameters[:,0],'-', color = 'r')
-plt.title('Order Parameter vs eta')
-plt.xlabel('Eta')
-plt.ylabel('Order Parameter')
-plt.plot (self.phase_transition_parameters[:,2],self.phase_transition_parameters[:,0],'-',color='b')
-plt.show()
+    fig, ax = plt.subplots()
+    plt.title("Order Parameter vs Density")
+    plt.xlabel("Density")
+    plt.ylabel("Order Parameter")
+    plt.plot(self.phase_transition_parameters[:,1],self.phase_transition_parameters[:,0],'-', color = 'r')
+    plt.title('Order Parameter vs eta')
+    plt.xlabel('Eta')
+    plt.ylabel('Order Parameter')
+    plt.plot (self.phase_transition_parameters[:,2],self.phase_transition_parameters[:,0],'-',color='b')
+    plt.show()
 
 
 # Naming the x-axis, y-axis and the whole graph
