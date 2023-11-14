@@ -8,10 +8,14 @@ import matplotlib.pyplot as plt
 
 
 InParam = np.array(1, 0.033, 1, 1, 10, np.pi/4, 1, 10) #first set of parameters
+#TODO change N as a linspace 1 to 10
 
 
-# TODO compute density and eta from this matrix
-#
+#TODO make a linspace to change N and eta and make an array according to Fateme's notation
+for j in (range(len(InParam)[1, :]))
+    Pset = Inparam[:, j]
+    Sim1 = Bird(Pset)
+
 
 # NOTICE: phase_transition_parameters is an array [v_a,rho, eta] example [[1,2,3],[4,5,6], ...] also I AM NOT SURE IF I need to call it like self.sth
 def plot_phase_transition(self.phase_transition_parameters):
