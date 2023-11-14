@@ -117,7 +117,7 @@ class Bird():
     #
     #     diff = np.min(np.abs(theta_avg_last-theta_avg_second_to_last),np.abs(theta_avg_last-theta_avg_second_to_last-2*np.pi))
 
-    def order_parameter_behaviour(self):
+    def order_parameter_calculation(self):
         # Absolut value of the average normslized velocity is the order parameter of the system and checking its behaviour determines the phase transition
         v_a = np.sqrt((np.sum(np.cos(self.vector[-1][:,2])))**2 + (np.sum(np.sin(self.vector[-1][:,2])))**2)/self.N
         return v_a
