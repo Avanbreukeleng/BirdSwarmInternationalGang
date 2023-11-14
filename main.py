@@ -94,18 +94,19 @@ class Bird():
         self.vector[-1][:][2] = theta_avg_r + np.random.uniform(-self.eta / 2, self.eta / 2, size=np.size(theta_avg_r))
 
 
-    def check_transition(self):
-        last_theta = self.vector[-1][:][2]
-        avg_theta_r_cos = np.matrix.sum(np.cos(last_theta), axis=1) / n
-        avg_theta_r_sin = np.matrix.sum(np.sin(last_theta), axis=1) / n
-        theta_avg_last = np.atan2(avg_theta_r_sin, avg_theta_r_cos)
-
-        second_to_last_theta = self.vector[-2][:][2]
-        avg_theta_r_cos = np.matrix.sum(np.cos(second_to_last_theta), axis=1) / n
-        avg_theta_r_sin = np.matrix.sum(np.sin(second_to_last_theta), axis=1) / n
-        theta_avg_second_to_last = np.atan2(avg_theta_r_sin, avg_theta_r_cos)
-
-        diff = np.min(theta_avg_last-)
+    # def check_transition(self): # we are not sure if this is a good idea, nevertheles we can plot it
+    #
+    #     last_thetas = self.vector[-1][:][2]
+    #     avg_theta_r_cos = np.matrix.sum(np.cos(last_thetas), axis=1) / self.N
+    #     avg_theta_r_sin = np.matrix.sum(np.sin(last_thetas), axis=1) / self.N
+    #     theta_avg_last = np.atan2(avg_theta_r_sin, avg_theta_r_cos)
+    #
+    #     second_to_last_thetas = self.vector[-2][:][2]
+    #     avg_theta_r_cos = np.matrix.sum(np.cos(second_to_last_thetas), axis=1) / self.N
+    #     avg_theta_r_sin = np.matrix.sum(np.sin(second_to_last_thetas), axis=1) / self.N
+    #     theta_avg_second_to_last = np.atan2(avg_theta_r_sin, avg_theta_r_cos)
+    #
+    #     diff = np.min(np.abs(theta_avg_last-theta_avg_second_to_last),np.abs(theta_avg_last-theta_avg_second_to_last-2*np.pi))
 
 
 
@@ -119,21 +120,44 @@ class Bird():
         #print(Timestep)
         #break
 
-   
-   
+def make_step(i):
+    # swarm.step(dt)
+    line.set_data(swarm.vector[i][:][0], swarm.vector[i][:][1])
+    return line
 
+def animate(vector):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, aspect='equal')
+    line = ax.plot([], [], 'bo', ms=25)
+    # TODO understand comma?
+    ax.set_xlim(0, L)
+    ax.set_ylim(0, L)
+    anim = animation.FuncAnimation(fig, make_step(i), interval=1, blit=False)
+
+def Plot():
+
+
+
+anim = animation.FuncAnimation(fig, animate, interval=1, blit=False)
 
 if __name__ == '__main__':
-    # Set to True to show input validation plots
-    # PLOT = True
+    seed = 1
+    vel = 0.033
+    N = 1
+    R = 1
+    L = 10
+    eta = np.pi/4
+    dt = 1
+    runs = 10
+    # Run simulation
+    swarm = Bird(seed,vel,N,R,L,eta,dt,runs)
+
+    # Plots and animations:
+    # Set to True to animate swarm motion
+    ANIMATE = True
+
+    if ANIMATE:
+        animate(swarm.vector)
 
     # Create input geometry from TOML file
     # inp = geometry('values.toml')
-
-    # Run simulation
-    output = Swarm(inp)
-
-
-    # def Swarm(inp):
-    #
-    # return output
