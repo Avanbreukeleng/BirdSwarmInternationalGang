@@ -77,7 +77,7 @@ class Bird():
     def new_theta(self):
         # Function to calculate the average angle of neighbouring boids and updates
         Neighbours = np.zeros(self.N, self.N)
-        np.fill_diagonal(Neighbours, self.vector[-1][:][2])
+        np.fill_diagonal(Neighbours, self.vector[-1][:][2]) #Since every bird is its own neighbour
         for i in range(0, self.N):
             # Sigma_theta = self.vector[-1][i][2]  # Sum of neighbours' thetas
             for j in range(i + 1, self.N):
@@ -93,7 +93,21 @@ class Bird():
         # TODO make sure there are no thetas going over 2pi and under 0
         self.vector[-1][:][2] = theta_avg_r + np.random.uniform(-self.eta / 2, self.eta / 2, size=np.size(theta_avg_r))
 
-    # we include bird n in the averaging
+
+    def check_transition(self):
+        last_theta = self.vector[-1][:][2]
+        avg_theta_r_cos = np.matrix.sum(np.cos(last_theta), axis=1) / n
+        avg_theta_r_sin = np.matrix.sum(np.sin(last_theta), axis=1) / n
+        theta_avg_last = np.atan2(avg_theta_r_sin, avg_theta_r_cos)
+
+        second_to_last_theta = self.vector[-2][:][2]
+        avg_theta_r_cos = np.matrix.sum(np.cos(second_to_last_theta), axis=1) / n
+        avg_theta_r_sin = np.matrix.sum(np.sin(second_to_last_theta), axis=1) / n
+        theta_avg_second_to_last = np.atan2(avg_theta_r_sin, avg_theta_r_cos)
+
+        diff = np.min(theta_avg_last-)
+
+
 
     def update(self):
     for i in range(0, 100) #i is the loop variable of the timestep, hard capped at 100 for now
