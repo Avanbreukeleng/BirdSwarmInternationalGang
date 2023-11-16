@@ -107,7 +107,7 @@ class Bird():
         self.vector[-1][:,2] = theta_avg_r + np.random.uniform(-self.eta / 2, self.eta / 2, size=np.size(theta_avg_r))
 
 
-    # def check_transition(self): # we are not sure if this is a good idea, nevertheles we can plot it
+    # def check_transition(self): # we are not sure if this is a good idea, nevertheless we can plot it
     #
     #     last_thetas = self.vector[-1][:][2]
     #     avg_theta_r_cos = np.matrix.sum(np.cos(last_thetas), axis=1) / self.N
