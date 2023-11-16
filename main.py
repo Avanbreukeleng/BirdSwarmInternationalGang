@@ -162,6 +162,7 @@ if __name__ == '__main__':
         line.set_data(swarm.vector[i][:,0], swarm.vector[i][:,1])
         return line
 
+
     if ANIMATE:
     #     animate(swarm)
     # def animate(swarm):
