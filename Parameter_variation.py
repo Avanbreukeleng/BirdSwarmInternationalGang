@@ -51,7 +51,7 @@ phase_transition_parameters = np.delete(phase_transition_parameters, 0, axis=0) 
 
 
 # NOTICE: phase_transition_parameters is an array [v_a,rho, eta] example [[1,2,3],[4,5,6], ...] also I AM NOT SURE IF I need to call it like self.sth
-def plot_phase_transition(self.phase_transition_parameters):
+def plot_phase_transition(phase_transition_parameters):
 # Investigate the behaviour of order parameter v_a as a function of density and eta
     fig, ax = plt.subplots()
     plt.title("Order Parameter vs Density")
@@ -63,5 +63,9 @@ def plot_phase_transition(self.phase_transition_parameters):
     plt.ylabel('Order Parameter')
     plt.plot (self.phase_transition_parameters[:,2],self.phase_transition_parameters[:,0],'-',color='b')
     plt.show()
+
+PLOT = True
+
+# if PLOT
 
 
