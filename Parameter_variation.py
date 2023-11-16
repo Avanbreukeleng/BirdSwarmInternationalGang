@@ -57,11 +57,11 @@ def plot_phase_transition(phase_transition_parameters):
     plt.title("Order Parameter vs Density")
     plt.xlabel("Density")
     plt.ylabel("Order Parameter")
-    plt.plot(self.phase_transition_parameters[:,1],self.phase_transition_parameters[:,0],'-', color = 'r')
+    plt.plot(phase_transition_parameters[:,1],phase_transition_parameters[:,0],'o', color = 'r')
     plt.title('Order Parameter vs eta')
     plt.xlabel('Eta')
     plt.ylabel('Order Parameter')
-    plt.plot (self.phase_transition_parameters[:,2],self.phase_transition_parameters[:,0],'-',color='b')
+    plt.plot(phase_transition_parameters[:,2],phase_transition_parameters[:,0],'o',color='b')
     plt.show()
 
 PLOT = True

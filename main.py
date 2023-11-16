@@ -54,7 +54,7 @@ class Bird():
         self.dt = dt                             # Constant time step
         self.N = N
         self.Nsteps = Nsteps
-        self.rho = self.N/(self.L)**2
+        #self.rho = self.N/(self.L)**2
 
         self.update()
 
@@ -142,10 +142,10 @@ class Bird():
 if __name__ == '__main__':
     seed = 1
     vel = 0.033
-    N = 2
+    N = 5
     R = 1
     L = 10
-    eta = np.pi/4
+    eta = 0.1
     dt = 1
     Nruns = 500
     # Run simulation
