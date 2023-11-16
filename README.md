@@ -16,3 +16,5 @@ The code is written from scratch but the physics and algorithms used throughout 
 November 2023 & December 2023
 
 We hope you enjoy working with this program and if you have any remarks please do not hesitate to contact us.
+
+NB: Please note that for the purpose of this project, JetBrains code_with_me tool was used. This allowed the three authors to work simultaneously on the same code. Although the program was run on Alejandro van Breukelen's computer, and the commits on Github are shown to belong to him only, all authors contributed equally.
