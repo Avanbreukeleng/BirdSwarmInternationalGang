@@ -26,7 +26,7 @@ class ParameterModifier:
 
 
 #How to use ParameterModifier:
-inparam = np.array([1, 0.033, 1, 1, 10, np.pi/4, 1, 10]) #first set of parameters
+inparam = np.array([1, 0.033, 10, 1, 10, np.pi/4, 1, 10]) #first set of parameters
 parameter_modifier = ParameterModifier(inparam) #Call the param modifier class
 new_N = np.linspace(10, 100, num=10)
 new_eta = np.array([0.1, 0.5, 1.0, 2.0])
@@ -42,8 +42,8 @@ class Bird_Simulator(): #This class' goal is to yield an array [v_a, rho, eta] t
         self.phase_transition_parameters = init_phase
 
     def run_all_bird(self, resulting_params):
-        for j in range((len(resulting_params)[1, :])):#this loops over all distinct sets of parameters
-            Pset = resulting_params[:, j]
+        for j in range(len(resulting_params[:, 1])):#this loops over all distinct sets of parameters
+            Pset = resulting_params[j, :]
             Sim1 = Bird(Pset[0],Pset[1],Pset[2],Pset[3],Pset[4],Pset[5],Pset[6],Pset[7]) #This is not elegant ;)
             Nset = resulting_params[2, j]
             Lset = resulting_params[4, j]
@@ -53,13 +53,8 @@ class Bird_Simulator(): #This class' goal is to yield an array [v_a, rho, eta] t
             local_trans = np.array([[va_bird, float(rho), float(eta)]])
             self.phase_transition_parameters = np.vstack((self.phase_transition_parameters, local_trans))
         self.phase_transition_parameters = np.delete(self.phase_transition_parameters, 0, axis=0) #Delete the first row of the phase_transition_parameters array, which was created in init_phase
+        return self.phase_transition_parameter
 
-#How to use Run_all birds
-#Has to be used after the Parameter Modifier Class, so that resulting_params is defined
-init_phase = np.array([[1, 2, 3]])  # Initialize the phase trans parameter array to be able to stack other arrays on it.
-bird_sim = Bird_Simulator(init_phase)
-bird_sim.run_all_bird(resulting_params)
-print(bird_sim.phase_transition_parameters)
 
 # NOTICE: phase_transition_parameters is an array [v_a,rho, eta] example [[1,2,3],[4,5,6], ...] also I AM NOT SURE IF I need to call it like self.sth
 def plot_phase_transition(phase_transition_parameters):
