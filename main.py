@@ -10,12 +10,7 @@ import matplotlib.animation as animation
 
 # from Parameter_variation import *
 
-# import pickle
-# from objects.assembly import Assembly
-# from objects.mesh import Mesh
-# from objects.element import Element
-
-# from structure import geometry
+# This is the branch before optimisation
 
     # =============================================================================
     #  PHY571 Numerical Physics Project
@@ -42,6 +37,7 @@ class Bird():
         vector = np.hstack((posvector, theta))
         vector = vector[np.newaxis,:, :]
         return vector
+
 
     """NOTATION: VECTOR[STEP][NBIRD,XYZ]"""
     
