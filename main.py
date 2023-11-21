@@ -40,13 +40,16 @@ class Bird():
         posvector = L*np.random.rand(N, 2)
         theta = np.random.uniform(0, 2*np.pi,(N,1))
         vector = np.hstack((posvector, theta))
+        vector = np.hstack((vector, np.zeros_like(theta)))
+        vector = np.hstack((vector, np.zeros_like(theta)))
         vector = vector[np.newaxis,:, :]
         return vector
 
-    """NOTATION: VECTOR[STEP][NBIRD,XYZ]"""
-    
+    """NOTATION: VECTOR[STEP][NBIRD,XYZBxBy]"""
+    # the columns go as follows: X, Y , THETA (angle of boid with respect to horizontal), BIN (bin coordinate of boids position (bx,by))
+
     def __init__(self,seed,vel,N,R,L,eta,dt,Nsteps):
-        self.vector = self.init_vector(seed,N,L)   # This is the NStepsx3 array that stores x,y and theta value at each step
+        self.vector = self.init_vector(int(seed),int(N),L)   # This is the NStepsx3 array that stores x,y and theta value at each step
                                                  #At each step, add another layer to the array (in 3D)
         self.velocity = vel                      # Constant norm of velocity for all birds
         self.R = R                               # Radius of influence of each boid
@@ -55,10 +58,15 @@ class Bird():
         self.dt = dt                             # Constant time step
         self.N = N
         self.Nsteps = Nsteps
+        self.Nbins = int((L/R)**2)
         #self.rho = self.N/(self.L)**2
 
         self.update()
 
+    def bin_update(self):
+        dummy = self.vector[-1][:,0:2]/self.L
+        dummy.astype(int)
+        self.vector[-1][:, 3:5] = dummy
 
     def evolve(self):
         # Function evolves the movement of the boids for one timestep dt and velocity v
@@ -71,11 +79,10 @@ class Bird():
 
         vector_new[:,0:2] = vector_new[:,0:2] % self.L # Periodic boundary conditoins
 
-        vector_new_reshaped = vector_new.reshape(1, self.N, 3) #reshape the new post matrix in order to be able to concatenate
+        vector_new_reshaped = vector_new.reshape(1, self.N, 5) #reshape the new post matrix in order to be able to concatenate
         self.vector = np.concatenate((self.vector, vector_new_reshaped), axis=0)
+        self.bin_update()
 
-
-        # vector_new = vector_old[:,0:1] +
 
     def new_theta(self):
         # Function to calculate the average angle of neighbouring boids and update
@@ -95,7 +102,6 @@ class Bird():
         theta_avg_r = np.arctan2(avg_theta_r_sin, avg_theta_r_cos) ### WARNING arctan2 gives 0 or pi in the case of two exactly opposite thetas
         # TODO make sure there are no thetas going over 2pi and under 0
         self.vector[-1][:,2] = theta_avg_r + np.random.uniform(-self.eta / 2, self.eta / 2, size=np.size(theta_avg_r))
-
 
     # def check_transition(self): # we are not sure if this is a good idea, nevertheless we can plot it
     #
