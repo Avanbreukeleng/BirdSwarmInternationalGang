@@ -77,6 +77,12 @@ def plot_phase_transition(phase_transition_parameters):
 
 PLOT = True
 
-# if PLOT
 
 
+#How to use Run_all birds
+#Has to be used after the Parameter Modifier Class, so that resulting_params is defined
+init_phase = np.array([[1, 2, 3]])  # Initialize the phase trans parameter array to be able to stack other arrays on it.
+bird_sim = Bird_Simulator(init_phase)
+bird_sim.run_all_bird(resulting_params)
+print(bird_sim.phase_transition_parameters)
+plot_phase_transition(bird_sim.run_all_bird(resulting_params))

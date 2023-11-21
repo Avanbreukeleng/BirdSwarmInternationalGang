@@ -3,6 +3,7 @@
 # import csv
 import numpy as np
 import matplotlib; matplotlib.use("TkAgg")
+import pickle
 
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -68,17 +69,8 @@ class Bird():
         vector_add[:,1] = self.velocity*self.dt*np.sin(theta)
         vector_new = vector_old + vector_add
 
-        for j in range(0, self.N):            #can probably be improved using x%L and y%L
-            x = vector_new[j,0]
-            y = vector_new[j,1]
-            if x > L:
-                vector_new[j,0] = x - L
-            if x < 0:
-                vector_new[j,0] = x + L
-            if y > L:
-                vector_new[j,1] = y - L
-            if y < 0:
-                vector_new[j,1] = y + L
+        vector_new[:,0:2] = vector_new[:,0:2] % self.L # Periodic boundary conditoins
+
         vector_new_reshaped = vector_new.reshape(1, self.N, 3) #reshape the new post matrix in order to be able to concatenate
         self.vector = np.concatenate((self.vector, vector_new_reshaped), axis=0)
 
@@ -90,13 +82,11 @@ class Bird():
         Neighbours = np.full((self.N, self.N), np.nan)
         np.fill_diagonal(Neighbours, self.vector[-1][:,2]) #Since every bird is its own neighbour
         for i in range(0, self.N):
-            # Sigma_theta = self.vector[-1][i][2]  # Sum of neighbours' thetas
-            for j in range(i+1, self.N):
-                distance_sq = (self.vector[-1][i,0] - self.vector[-1][j,0]) ** 2 + (self.vector[-1][i,1] - self.vector[-1][j,1]) ** 2
-                if  distance_sq < self.R ** 2:
-                # if 1==0:
-                    Neighbours[i,j] = self.vector[-1][j,2]
-                    Neighbours[j,i] = self.vector[-1][i,2]
+            distance_sq = (self.vector[-1][i,0] - self.vector[-1][i+1:,0]) ** 2 + (self.vector[-1][i,1] - self.vector[-1][i+1:,1]) ** 2
+            indices = np.argwhere(distance_sq < self.R ** 2)
+            Neighbours[i,i+1+indices] = self.vector[-1][i+1+indices,2]
+            Neighbours[i+1+indices,i] = self.vector[-1][i,2]
+
         # print(Neighbours)
         n = np.count_nonzero(~np.isnan(Neighbours),axis=1)
         # n = np.count_nonzero(Neighbours, axis=1)
@@ -129,8 +119,10 @@ class Bird():
 
     def update(self):
         for i in range(self.Nsteps):  #i is the loop variable of the timestep, hard capped at 10 for now
+            if i%10 == 0: print(i)
             self.evolve()
             self.new_theta()
+
         #TODO Lastly, check if the dispersion of average theta is close to the noise ;
         self.va = self.order_parameter_calculation()
         #if dispersion in range()
@@ -143,37 +135,48 @@ if __name__ == '__main__':
     seed = 1
     vel = 0.033
     N = 5
-    R = 1
+    R = 2
     L = 10
     eta = 0.1
     dt = 1
-    Nruns = 500
+    Nruns = 100
     # Run simulation
-    swarm = Bird(seed,vel,N,R,L,eta,dt,Nruns)
+
+    RUN = True
+    ANIMATE = True
+    SAVE = False
+    READ = False
+
+    if RUN:
+        swarm = Bird(seed,vel,N,R,L,eta,dt,Nruns)
 
     # Plots and animations:
     # Set to True to animate swarm motion
-    ANIMATE = True
 
+    if SAVE:
+        # np.savetxt("Vector1.csv", swarm.vector, delimiter=",")
+        name = input('Desired file name identification?\t')
+        with open('Output_files/' + name + '_pickle_swarm.csv', 'wb') as pickle_out:
+            pickle.dump(swarm, pickle_out)
 
-    def make_step(i):
-        # swarm.step(dt)
-        # line = ax.quiver(swarm.vector[i][:,0:1],np.cos(swarm.vector[i][:,2]),np.sin(swarm.vector[i][:,2]))
-        line.set_data(swarm.vector[i][:,0], swarm.vector[i][:,1])
-        return line
-
+    if READ:
+        name = input('Desired file name identification?\t')
+        with open('Output_files/' + name + '_pickle_swarm.csv', "rb") as pickle_in:  # "rb" because we want to read in binary mode
+            swarm = pickle.load(pickle_in)
 
     if ANIMATE:
-    #     animate(swarm)
-    # def animate(swarm):
+        def make_step(i):
+            # swarm.step(dt)
+            # line = ax.quiver(swarm.vector[i][:,0:1],np.cos(swarm.vector[i][:,2]),np.sin(swarm.vector[i][:,2]))
+            line.set_data(swarm.vector[i][:, 0], swarm.vector[i][:, 1])
+            return line
+
         fig = plt.figure()
         ax = fig.add_subplot(111, aspect='equal')
-        line, = ax.plot([], [], 'bo', ms=15)
-
-    # TODO understand comma?
+        line, = ax.plot([], [], 'bo', ms=R/L*100)
         ax.set_xlim(0, L)
         ax.set_ylim(0, L)
-        bird_animation = animation.FuncAnimation(fig, make_step, frames=Nruns, interval=100, blit=False)
+        bird_animation = animation.FuncAnimation(fig, make_step, frames=Nruns, interval=10, blit=False)
         plt.show()
     # Create input geometry from TOML file
     # inp = geometry('values.toml')
