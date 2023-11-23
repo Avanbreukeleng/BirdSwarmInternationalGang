@@ -58,14 +58,14 @@ class Bird():
         self.dt = dt                             # Constant time step
         self.N = N
         self.Nsteps = Nsteps
-        self.Nbins = int((L/R)**2)
+        self.Lbins = L/int(L/R)
         #self.rho = self.N/(self.L)**2
-
+        self.Nbins = int(self.L/self.Lbins)
         self.update()
 
-    def bin_update(self):
-        dummy = self.vector[-1][:,0:2]/self.L
-        dummy.astype(int)
+    def bin_update(self): #This function does not change the bins themselves, but tracks which birds are in which bin
+        dummy = self.vector[-1][:,0:2]/self.Lbins
+        dummy.astype(int) # round down at which bin it is, (from bin 0 to Nbin-1)
         self.vector[-1][:, 3:5] = dummy
 
     def evolve(self):
@@ -83,16 +83,44 @@ class Bird():
         self.vector = np.concatenate((self.vector, vector_new_reshaped), axis=0)
         self.bin_update()
 
-
     def new_theta(self):
         # Function to calculate the average angle of neighbouring boids and update
         Neighbours = np.full((self.N, self.N), np.nan)
         np.fill_diagonal(Neighbours, self.vector[-1][:,2]) #Since every bird is its own neighbour
         for i in range(0, self.N):
-            distance_sq = (self.vector[-1][i,0] - self.vector[-1][i+1:,0]) ** 2 + (self.vector[-1][i,1] - self.vector[-1][i+1:,1]) ** 2
+            bin_ix = int(self.vector[-1][i,3])
+            bin_iy = int(self.vector[-1][i,4])
+            # ones = np.ones_like(bin_ix)
+            # cond_1 = self.vector[-1][i+1:,3] > (bin_ix-2)
+            # cond_2 = self.vector[-1][i+1:,3] < (bin_ix+2)
+            # cond_3 = self.vector[-1][i+1:,4] > (bin_iy-2)
+            # cond_4 = self.vector[-1][i+1:,4] < (bin_iy+2)
+
+            cond_1 = np.argwhere(self.vector[-1][i+1:,3] > (bin_ix-2))
+            cond_2 = np.argwhere(self.vector[-1][i+1:,3] < (bin_ix+2))
+            cond_3 = np.argwhere(self.vector[-1][i+1:,4] > (bin_iy-2))
+            cond_4 = np.argwhere(self.vector[-1][i+1:,4] < (bin_iy+2))
+            cond_x = np.intersect1d(cond_1, cond_2)
+            cond_y = np.intersect1d(cond_3, cond_4)
+            neigh_bins = i+1+np.intersect1d(cond_x, cond_y)
+
+            # cond_x = np.logical_and(cond_1, cond_2)
+            # cond_y = np.logical_and(cond_3, cond_4)
+            # cond = np.logical_and(cond_x, cond_y)
+            # neigh_bins = np.argwhere(cond)
+            # neigh_binx = np.argwhere(cond_x)
+            # neigh_biny = np.argwhere(cond_y)
+            # neigh_binx = np.argwhere(self.vector[-1][i+1:,3] > (bin_ix-2) & self.vector[-1][i+1:,3] < (bin_ix+2) )
+            # neigh_biny = np.argwhere(self.vector[-1][i+1:,4] > (bin_iy-2) & self.vector[-1][i+1:,4] < (bin_iy+2) )
+            # neigh_bins = neigh_binx[neigh_binx == neigh_biny]
+            # neigh_bins = [neigh_binx,neigh_biny]
+            distance_sq = (self.vector[-1][i,0] - self.vector[-1][neigh_bins,0]) ** 2 + (self.vector[-1][i,1] - self.vector[-1][neigh_bins,1]) ** 2
+            # distance_sq = (self.vector[-1][i,0] - self.vector[-1][i+1:,0]) ** 2 + (self.vector[-1][i,1] - self.vector[-1][i+1:,1]) ** 2
             indices = np.argwhere(distance_sq < self.R ** 2)
-            Neighbours[i,i+1+indices] = self.vector[-1][i+1+indices,2]
-            Neighbours[i+1+indices,i] = self.vector[-1][i,2]
+            """THE PROBLEM IS THAT HERE NP.ARGWHERE TAKES THE WRONG INDICES"""
+            indices = neigh_bins[indices]
+            Neighbours[i,indices] = self.vector[-1][indices,2]
+            Neighbours[indices,i] = self.vector[-1][i,2]
 
         # print(Neighbours)
         n = np.count_nonzero(~np.isnan(Neighbours),axis=1)
@@ -119,9 +147,12 @@ class Bird():
 
     def order_parameter_calculation(self):
         # Absolut value of the average normslized velocity is the order parameter of the system and checking its behaviour determines the phase transition
-        v_a = np.sqrt((np.sum(np.cos(self.vector[-1][:,2])))**2 + (np.sum(np.sin(self.vector[-1][:,2])))**2)/self.N
-        return v_a
-        #TODO plot v_a as function of rho and eta to see the phase transition
+        v_a = np.sqrt((np.sum(np.cos(self.vector[:,:,2]),axis=1))**2 + (np.sum(np.sin(self.vector[:,:,2]),axis=1))**2)/self.N
+        # v_a is an array with Nsteps components, each component is the order parameter for each step
+        # Also we need the mean value of v_a after transient phase
+        r = v_a[v_a>0.5] # Eliminating values of order parameters in the transient regime, we assumed if order parameter is more than 0.5 then teh system has faced the phase transition
+        mean_v_a = np.sum(r)/len(r) # Mean value of order parameter for each set of initial condition
+        return v_a, mean_v_a #TODO check what happens when no va are above 0.5
 
     def update(self):
         for i in range(self.Nsteps):  #i is the loop variable of the timestep, hard capped at 10 for now
@@ -140,12 +171,12 @@ class Bird():
 if __name__ == '__main__':
     seed = 1
     vel = 0.033
-    N = 5
-    R = 2
+    N = 200
+    R = 1
     L = 10
     eta = 0.1
     dt = 1
-    Nruns = 100
+    Nsteps = 1000
     # Run simulation
 
     RUN = True
@@ -154,7 +185,7 @@ if __name__ == '__main__':
     READ = False
 
     if RUN:
-        swarm = Bird(seed,vel,N,R,L,eta,dt,Nruns)
+        swarm = Bird(seed,vel,N,R,L,eta,dt,Nsteps)
 
     # Plots and animations:
     # Set to True to animate swarm motion
@@ -182,7 +213,7 @@ if __name__ == '__main__':
         line, = ax.plot([], [], 'bo', ms=R/L*100)
         ax.set_xlim(0, L)
         ax.set_ylim(0, L)
-        bird_animation = animation.FuncAnimation(fig, make_step, frames=Nruns, interval=10, blit=False)
+        bird_animation = animation.FuncAnimation(fig, make_step, frames=Nsteps, interval=20, blit=False)
         plt.show()
     # Create input geometry from TOML file
     # inp = geometry('values.toml')
