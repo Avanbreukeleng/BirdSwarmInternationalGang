@@ -77,7 +77,7 @@ class Bird():
         vector_add[:,1] = self.velocity*self.dt*np.sin(theta)
         vector_new = vector_old + vector_add
 
-        vector_new[:,0:2] = vector_new[:,0:2] % self.L # Periodic boundary conditoins
+        vector_new[:,0:2] = vector_new[:,0:2] % self.L # Periodic boundary conditions
 
         vector_new_reshaped = vector_new.reshape(1, self.N, 5) #reshape the new post matrix in order to be able to concatenate
         self.vector = np.concatenate((self.vector, vector_new_reshaped), axis=0)

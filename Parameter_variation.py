@@ -28,14 +28,15 @@ class ParameterModifier:
 
 
 # How to use ParameterModifier:
-inparam = np.array([1, 0.033, 500, 1, 10, np.pi / 4, 1, 10])  # first set of parameters
+inparam = np.array([1, 0.033, 200, 2, 10, 0.1, 1, 100])  # first set of parameters
 parameter_modifier = ParameterModifier(inparam)  # Call the param modifier class
-new_N = np.linspace(10, 100, num=10)
-new_eta = np.array([0.1, 0.5, 1.0, 2.0])
+new_N = np.linspace(10, 150, num=15)
+new_eta = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.3, 1.5, 2.0, 2.5, 3.0])
 parameter_modifier.modify_parameters(new_N, new_eta)
 resulting_params = parameter_modifier.get_parameters()
 # print(resulting_params)
 # End of using ParameterModifier
+# Run simulation
 
 init_phase = np.array([[1, 2, 3]])  # Initialize the phase trans parameter array to be able to stack other arrays on it.
 
@@ -49,7 +50,7 @@ class Bird_Simulator():  # This class' goal is to yield an array [v_a, rho, eta]
         for j in range(len(resulting_params[:, 1])):  # this loops over all distinct sets of parameters
             Pset = resulting_params[j, :]
             Sim1 = Bird(int(Pset[0]), Pset[1], int(Pset[2]), Pset[3], Pset[4], Pset[5], Pset[6],
-                        int(Pset[7]))  # This is not elegant ;)
+                        int(Pset[7]))  # This is not elegant but it works
             Nset = resulting_params[j, 2]
             Lset = resulting_params[j, 4]
             rho = Nset / (Lset) ** 2
@@ -58,19 +59,23 @@ class Bird_Simulator():  # This class' goal is to yield an array [v_a, rho, eta]
             print(va)
             local_trans = np.array([[mean_va, rho, eta]])
             self.phase_transition_parameters = np.vstack((self.phase_transition_parameters, local_trans))
-        self.phase_transition_parameters = np.delete(self.phase_transition_parameters, 0,
-                                                     axis=0)  # Delete the first row of the phase_transition_parameters array, which was created in init_phase
-
-    def get_trans_parameters(self):
-        return self.phase_transition_parameters
+        self.phase_transition_parameters = np.delete(self.phase_transition_parameters, 0, axis=0)  # Delete the first row of the phase_transition_parameters array, which was created in init_phase
+        self.matrix_split = np.vsplit((self.phase_transition_parameters, len(new_N)+1)) #this splits the transition parameter array into two,
+        #one with constant eta and varying N, and one with constant N and varying eta
+        self.N_matrix = self.matrix_split[0]
+        self.eta_matrix = self.matrix_split[1]
+    def get_N_matrix(self):
+        return self.N_matrix
+    def get_eta_matrix(self):
+        return self.eta_matrix
 
 #How to use Run_all birds
 #Has to be used after the Parameter Modifier Class, so that resulting_params is defined
 init_phase = np.array([[1, 2, 3]])  # Initialize the phase trans parameter array to be able to stack other arrays on it.
 bird_sim = Bird_Simulator(init_phase)
 bird_sim.run_all_bird(resulting_params)
-phase_matrix = bird_sim.get_trans_parameters()
-#print(phase_matrix)
+N_matrix = bird_sim.N_matrix
+eta_matrix = bird_sim.eta_matrix
 
 
 
