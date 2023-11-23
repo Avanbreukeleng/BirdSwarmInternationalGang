@@ -95,14 +95,26 @@ class Bird():
             # cond_2 = self.vector[-1][i+1:,3] < (bin_ix+2)
             # cond_3 = self.vector[-1][i+1:,4] > (bin_iy-2)
             # cond_4 = self.vector[-1][i+1:,4] < (bin_iy+2)
+            ### This part analyses what birds are in neighbouring bins. Including ones that other the (periodic) boundaries
+            cond_1 = np.logical_or(self.vector[-1][i + 1:, 3] > (bin_ix - 2),self.vector[-1][i + 1:, 3] > (bin_ix - 1)%self.Nbins)
+            cond_2 = np.logical_or(self.vector[-1][i + 1:, 3] < (bin_ix + 2),self.vector[-1][i + 1:, 3] > (bin_ix + 1)%self.Nbins)
+            cond_3 = np.logical_or(self.vector[-1][i + 1:, 4] > (bin_iy - 2),self.vector[-1][i + 1:, 3] > (bin_iy - 1)%self.Nbins)
+            cond_4 = np.logical_or(self.vector[-1][i + 1:, 4] < (bin_iy + 2),self.vector[-1][i + 1:, 3] > (bin_iy + 1)%self.Nbins)
 
-            cond_1 = np.argwhere(self.vector[-1][i+1:,3] > (bin_ix-2))
-            cond_2 = np.argwhere(self.vector[-1][i+1:,3] < (bin_ix+2))
-            cond_3 = np.argwhere(self.vector[-1][i+1:,4] > (bin_iy-2))
-            cond_4 = np.argwhere(self.vector[-1][i+1:,4] < (bin_iy+2))
-            cond_x = np.intersect1d(cond_1, cond_2)
-            cond_y = np.intersect1d(cond_3, cond_4)
-            neigh_bins = i+1+np.intersect1d(cond_x, cond_y)
+            i_1 = np.argwhere(cond_1)
+            i_2 = np.argwhere(cond_2)
+            i_3 = np.argwhere(cond_3)
+            i_4 = np.argwhere(cond_4)
+
+            ### This other section also analyses the neighbouring bins, but although periodic boundary conditions are not specified, it does seem to have an effect?
+            # i_1 = np.argwhere(self.vector[-1][i+1:,3] > (bin_ix-2))
+            # i_2 = np.argwhere(self.vector[-1][i+1:,3] < (bin_ix+2))
+            # i_3 = np.argwhere(self.vector[-1][i+1:,4] > (bin_iy-2))
+            # i_4 = np.argwhere(self.vector[-1][i+1:,4] < (bin_iy+2))
+
+            i_x = np.intersect1d(i_1, i_2)
+            i_y = np.intersect1d(i_3, i_4)
+            neigh_bins = i+1+np.intersect1d(i_x, i_y)
 
             # cond_x = np.logical_and(cond_1, cond_2)
             # cond_y = np.logical_and(cond_3, cond_4)
@@ -114,7 +126,9 @@ class Bird():
             # neigh_biny = np.argwhere(self.vector[-1][i+1:,4] > (bin_iy-2) & self.vector[-1][i+1:,4] < (bin_iy+2) )
             # neigh_bins = neigh_binx[neigh_binx == neigh_biny]
             # neigh_bins = [neigh_binx,neigh_biny]
-            distance_sq = (self.vector[-1][i,0] - self.vector[-1][neigh_bins,0]) ** 2 + (self.vector[-1][i,1] - self.vector[-1][neigh_bins,1]) ** 2
+            distance_sq = (np.remainder(self.vector[-1][i,0] - self.vector[-1][neigh_bins,0] + self.L / 2., self.L) - self.L / 2.) ** 2 \
+                          + (np.remainder(self.vector[-1][i,0] - self.vector[-1][neigh_bins,0] + self.L / 2., self.L) - self.L / 2.) ** 2
+            # distance_sq = (self.vector[-1][i,0] - self.vector[-1][neigh_bins,0]) ** 2 + (self.vector[-1][i,1] - self.vector[-1][neigh_bins,1]) ** 2
             # distance_sq = (self.vector[-1][i,0] - self.vector[-1][i+1:,0]) ** 2 + (self.vector[-1][i,1] - self.vector[-1][i+1:,1]) ** 2
             indices = np.argwhere(distance_sq < self.R ** 2)
             """THE PROBLEM IS THAT HERE NP.ARGWHERE TAKES THE WRONG INDICES"""
@@ -171,12 +185,12 @@ class Bird():
 if __name__ == '__main__':
     seed = 1
     vel = 0.033
-    N = 200
+    N = 400
     R = 1
-    L = 10
+    L = 50
     eta = 0.1
     dt = 1
-    Nsteps = 1000
+    Nsteps = 700
     # Run simulation
 
     RUN = True
