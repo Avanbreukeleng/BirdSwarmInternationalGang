@@ -139,12 +139,12 @@ class Bird():
 if __name__ == '__main__':
     seed = 1
     vel = 0.033
-    N = 1000
+    N = 5000
     R = 0.1
-    L = 10
+    L = 100
     eta = 0.1
     dt = 1
-    Nruns = 1000
+    Nruns = 50
     # Run simulation
 
     RUN = True
