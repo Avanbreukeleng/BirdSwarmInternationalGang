@@ -39,6 +39,7 @@ class Bird():
         np.random.seed(seed)
         posvector = L*np.random.rand(N, 2)
         theta = np.random.uniform(0, 2*np.pi,(N,1))
+        # print(theta)
         vector = np.hstack((posvector, theta))
         vector = np.hstack((vector, np.zeros_like(theta)))
         vector = np.hstack((vector, np.zeros_like(theta)))
@@ -88,23 +89,51 @@ class Bird():
         Neighbours = np.full((self.N, self.N), np.nan)
         np.fill_diagonal(Neighbours, self.vector[-1][:,2]) #Since every bird is its own neighbour
         for i in range(0, self.N):
+            # TODO: can you go to range(o,self.N-1) since the last one alreay knows its neighbours?
             bin_ix = int(self.vector[-1][i,3])
             bin_iy = int(self.vector[-1][i,4])
+            # print("bin of", i, "is", bin_ix, bin_iy)
             # ones = np.ones_like(bin_ix)
             # cond_1 = self.vector[-1][i+1:,3] > (bin_ix-2)
             # cond_2 = self.vector[-1][i+1:,3] < (bin_ix+2)
             # cond_3 = self.vector[-1][i+1:,4] > (bin_iy-2)
             # cond_4 = self.vector[-1][i+1:,4] < (bin_iy+2)
-            ### This part analyses what birds are in neighbouring bins. Including ones that other the (periodic) boundaries
-            cond_1 = np.logical_or(self.vector[-1][i + 1:, 3] > (bin_ix - 2),self.vector[-1][i + 1:, 3] > (bin_ix - 1)%self.Nbins)
-            cond_2 = np.logical_or(self.vector[-1][i + 1:, 3] < (bin_ix + 2),self.vector[-1][i + 1:, 3] > (bin_ix + 1)%self.Nbins)
-            cond_3 = np.logical_or(self.vector[-1][i + 1:, 4] > (bin_iy - 2),self.vector[-1][i + 1:, 3] > (bin_iy - 1)%self.Nbins)
-            cond_4 = np.logical_or(self.vector[-1][i + 1:, 4] < (bin_iy + 2),self.vector[-1][i + 1:, 3] > (bin_iy + 1)%self.Nbins)
+            if bin_ix<1 or bin_ix >8:
+                cond_x = np.logical_or(self.vector[-1][i + 1:, 3] > (bin_ix - 2) % self.Nbins,
+                                       self.vector[-1][i + 1:, 3] < (bin_ix + 2) % self.Nbins)
+            else:
+                cond_x = np.logical_and(self.vector[-1][i + 1:, 3] > (bin_ix - 2),
+                                        self.vector[-1][i + 1:, 3] < (bin_ix + 2))
+            # print("and condx is",cond_x)
+            if bin_iy < 1 or bin_iy > 8:
+                cond_y = np.logical_or(self.vector[-1][i + 1:, 4] > (bin_iy - 2) % self.Nbins,
+                                       self.vector[-1][i + 1:, 4] < (bin_iy + 2) % self.Nbins)
+            else:
+                cond_y = np.logical_and(self.vector[-1][i + 1:, 4] > (bin_iy - 2),
+                                        self.vector[-1][i + 1:, 4] < (bin_iy + 2))
+            # print("and condy is", cond_y)
+                    ### This part analyses what birds are in neighbouring bins. Including ones that other the (periodic) boundaries
+            # cond_1 = (self.vector[-1][i + 1:, 3] > (bin_ix - 2)%self.Nbins)
+            # cond_2 = (self.vector[-1][i + 1:, 3] < (bin_ix + 2)%self.Nbins)
+            # cond_3 = (self.vector[-1][i + 1:, 4] > (bin_iy - 2)%self.Nbins)
+            # cond_4 = (self.vector[-1][i + 1:, 4] < (bin_iy + 2)%self.Nbins)
 
-            i_1 = np.argwhere(cond_1)
-            i_2 = np.argwhere(cond_2)
-            i_3 = np.argwhere(cond_3)
-            i_4 = np.argwhere(cond_4)
+            # cond_1 = np.logical_or(self.vector[-1][i + 1:, 3] > (bin_ix - 2),
+            #                        self.vector[-1][i + 1:, 3] > (bin_ix - 1) % self.Nbins)
+            # cond_2 = np.logical_or(self.vector[-1][i + 1:, 3] < (bin_ix + 2),
+            #                        self.vector[-1][i + 1:, 3] > (bin_ix + 1) % self.Nbins)
+            # cond_3 = np.logical_or(self.vector[-1][i + 1:, 4] > (bin_iy - 2),
+            #                        self.vector[-1][i + 1:, 3] > (bin_iy - 1) % self.Nbins)
+            # cond_4 = np.logical_or(self.vector[-1][i + 1:, 4] < (bin_iy + 2),
+            #                        self.vector[-1][i + 1:, 3] > (bin_iy + 1) % self.Nbins)
+
+            cond = np.logical_and(cond_x,cond_y)
+            # print(cond)
+
+            # i_1 = np.argwhere(cond_1)
+            # i_2 = np.argwhere(cond_2)
+            # i_3 = np.argwhere(cond_3)
+            # i_4 = np.argwhere(cond_4)
 
             ### This other section also analyses the neighbouring bins, but although periodic boundary conditions are not specified, it does seem to have an effect?
             # i_1 = np.argwhere(self.vector[-1][i+1:,3] > (bin_ix-2))
@@ -112,9 +141,10 @@ class Bird():
             # i_3 = np.argwhere(self.vector[-1][i+1:,4] > (bin_iy-2))
             # i_4 = np.argwhere(self.vector[-1][i+1:,4] < (bin_iy+2))
 
-            i_x = np.intersect1d(i_1, i_2)
-            i_y = np.intersect1d(i_3, i_4)
-            neigh_bins = i+1+np.intersect1d(i_x, i_y)
+            # i_x = np.intersect1d(i_1, i_2)
+            # i_y = np.intersect1d(i_3, i_4)
+            # neigh_bins = i+1+np.intersect1d(i_x, i_y)
+            neigh_bins = i+1+np.argwhere(cond)
 
             # cond_x = np.logical_and(cond_1, cond_2)
             # cond_y = np.logical_and(cond_3, cond_4)
@@ -133,14 +163,15 @@ class Bird():
             indices = np.argwhere(distance_sq < self.R ** 2)
             """THE PROBLEM IS THAT HERE NP.ARGWHERE TAKES THE WRONG INDICES"""
             indices = neigh_bins[indices]
-            Neighbours[i,indices] = self.vector[-1][indices,2]
-            Neighbours[indices,i] = self.vector[-1][i,2]
+            Neighbours[i,indices] = self.vector[-1][i,2]
+            Neighbours[indices,i] = self.vector[-1][indices,2]
+### WHEN YOU CHANGE THE ORDER OF INDICES FOR I IN HERE IT CHANGES EVERYTHINGGG, WHYYYY???? BECUASE OF the SUMMING OF THE AXIS?
 
         # print(Neighbours)
-        n = np.count_nonzero(~np.isnan(Neighbours),axis=1)
+        n = np.count_nonzero(~np.isnan(Neighbours),axis=0)
         # n = np.count_nonzero(Neighbours, axis=1)
-        avg_theta_r_cos = np.nansum(np.cos(Neighbours), axis=1) / n
-        avg_theta_r_sin = np.nansum(np.sin(Neighbours), axis=1) / n
+        avg_theta_r_cos = np.nansum(np.cos(Neighbours), axis=0) / n
+        avg_theta_r_sin = np.nansum(np.sin(Neighbours), axis=0) / n
         theta_avg_r = np.arctan2(avg_theta_r_sin, avg_theta_r_cos) ### WARNING arctan2 gives 0 or pi in the case of two exactly opposite thetas
         # TODO make sure there are no thetas going over 2pi and under 0
         self.vector[-1][:,2] = theta_avg_r + np.random.uniform(-self.eta / 2, self.eta / 2, size=np.size(theta_avg_r))
@@ -170,7 +201,7 @@ class Bird():
 
     def update(self):
         for i in range(self.Nsteps):  #i is the loop variable of the timestep, hard capped at 10 for now
-            if i%10 == 0: print(i)
+            # if i%10 == 0: print(i)
             self.evolve()
             self.new_theta()
 
@@ -185,12 +216,12 @@ class Bird():
 if __name__ == '__main__':
     seed = 1
     vel = 0.033
-    N = 400
+    N = 100
     R = 1
-    L = 50
+    L = 20
     eta = 0.1
     dt = 1
-    Nsteps = 700
+    Nsteps = 100
     # Run simulation
 
     RUN = True
@@ -227,7 +258,7 @@ if __name__ == '__main__':
         line, = ax.plot([], [], 'bo', ms=R/L*100)
         ax.set_xlim(0, L)
         ax.set_ylim(0, L)
-        bird_animation = animation.FuncAnimation(fig, make_step, frames=Nsteps, interval=20, blit=False)
+        bird_animation = animation.FuncAnimation(fig, make_step, frames=Nsteps, interval=50, blit=False)
         plt.show()
     # Create input geometry from TOML file
     # inp = geometry('values.toml')
