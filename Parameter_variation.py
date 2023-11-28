@@ -18,7 +18,7 @@ class ParameterModifier:
 
         for j in range(len(new_eta)):
             modified_parameters = np.copy(self.parameters[-1])  # Copy the last row
-            modified_parameters[4] = new_eta[j]
+            modified_parameters[5] = new_eta[j]
             self.parameters = np.vstack((self.parameters, modified_parameters))
 
     def get_parameters(self):
@@ -48,6 +48,7 @@ class Bird_Simulator():  # This class' goal is to yield an array [v_a, rho, eta]
         va_matrix = []  # Initialize an empty list to store va vectors, this has essentially the same purpose as init_phase, but for a different array
         for j in range(len(resulting_params[:, 1])):  # this loops over all distinct sets of parameters
             Pset = resulting_params[j, :]
+            print("Pset",Pset)
             Sim1 = Bird(int(Pset[0]), Pset[1], int(Pset[2]), Pset[3], Pset[4], Pset[5], Pset[6],
                         int(Pset[7]))  # This is not elegant but it works
             Nset = resulting_params[j, 2]

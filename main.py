@@ -66,6 +66,7 @@ class Bird():
         self.N = N
         self.Nsteps = Nsteps
         self.Lbins = L/int(L/R)
+
         #self.rho = self.N/(self.L)**2
         self.Nbins = int(self.L/self.Lbins)
         self.update()
@@ -94,107 +95,44 @@ class Bird():
         # Function to calculate the average angle of neighbouring boids and update
         Neighbours = np.full((self.N, self.N), np.nan)
         np.fill_diagonal(Neighbours, self.vector[-1][:,2]) #Since every bird is its own neighbour
-        for i in range(0, self.N):
-            # TODO: can you go to range(o,self.N-1) since the last one alreay knows its neighbours?
+        for i in range(0, self.N-1):
             bin_ix = int(self.vector[-1][i,3])
             bin_iy = int(self.vector[-1][i,4])
-            # print("bin of", i, "is", bin_ix, bin_iy)
-            # ones = np.ones_like(bin_ix)
-            # cond_1 = self.vector[-1][i+1:,3] > (bin_ix-2)
-            # cond_2 = self.vector[-1][i+1:,3] < (bin_ix+2)
-            # cond_3 = self.vector[-1][i+1:,4] > (bin_iy-2)
-            # cond_4 = self.vector[-1][i+1:,4] < (bin_iy+2)
-            if bin_ix<1 or bin_ix >8:
+
+            if bin_ix<1 or bin_ix > (self.Nbins-2):
                 cond_x = np.logical_or(self.vector[-1][i + 1:, 3] > (bin_ix - 2) % self.Nbins,
                                        self.vector[-1][i + 1:, 3] < (bin_ix + 2) % self.Nbins)
             else:
                 cond_x = np.logical_and(self.vector[-1][i + 1:, 3] > (bin_ix - 2),
                                         self.vector[-1][i + 1:, 3] < (bin_ix + 2))
             # print("and condx is",cond_x)
-            if bin_iy < 1 or bin_iy > 8:
+            if bin_iy < 1 or bin_iy > (self.Nbins-2):
                 cond_y = np.logical_or(self.vector[-1][i + 1:, 4] > (bin_iy - 2) % self.Nbins,
                                        self.vector[-1][i + 1:, 4] < (bin_iy + 2) % self.Nbins)
             else:
                 cond_y = np.logical_and(self.vector[-1][i + 1:, 4] > (bin_iy - 2),
                                         self.vector[-1][i + 1:, 4] < (bin_iy + 2))
-            # print("and condy is", cond_y)
-                    ### This part analyses what birds are in neighbouring bins. Including ones that other the (periodic) boundaries
-            # cond_1 = (self.vector[-1][i + 1:, 3] > (bin_ix - 2)%self.Nbins)
-            # cond_2 = (self.vector[-1][i + 1:, 3] < (bin_ix + 2)%self.Nbins)
-            # cond_3 = (self.vector[-1][i + 1:, 4] > (bin_iy - 2)%self.Nbins)
-            # cond_4 = (self.vector[-1][i + 1:, 4] < (bin_iy + 2)%self.Nbins)
-
-            # cond_1 = np.logical_or(self.vector[-1][i + 1:, 3] > (bin_ix - 2),
-            #                        self.vector[-1][i + 1:, 3] > (bin_ix - 1) % self.Nbins)
-            # cond_2 = np.logical_or(self.vector[-1][i + 1:, 3] < (bin_ix + 2),
-            #                        self.vector[-1][i + 1:, 3] > (bin_ix + 1) % self.Nbins)
-            # cond_3 = np.logical_or(self.vector[-1][i + 1:, 4] > (bin_iy - 2),
-            #                        self.vector[-1][i + 1:, 3] > (bin_iy - 1) % self.Nbins)
-            # cond_4 = np.logical_or(self.vector[-1][i + 1:, 4] < (bin_iy + 2),
-            #                        self.vector[-1][i + 1:, 3] > (bin_iy + 1) % self.Nbins)
 
             cond = np.logical_and(cond_x,cond_y)
-            # print(cond)
 
-            # i_1 = np.argwhere(cond_1)
-            # i_2 = np.argwhere(cond_2)
-            # i_3 = np.argwhere(cond_3)
-            # i_4 = np.argwhere(cond_4)
-
-            ### This other section also analyses the neighbouring bins, but although periodic boundary conditions are not specified, it does seem to have an effect?
-            # i_1 = np.argwhere(self.vector[-1][i+1:,3] > (bin_ix-2))
-            # i_2 = np.argwhere(self.vector[-1][i+1:,3] < (bin_ix+2))
-            # i_3 = np.argwhere(self.vector[-1][i+1:,4] > (bin_iy-2))
-            # i_4 = np.argwhere(self.vector[-1][i+1:,4] < (bin_iy+2))
-            #
-            # i_x = np.intersect1d(i_1, i_2)
-            # i_y = np.intersect1d(i_3, i_4)
-            # neigh_bins = i+1+np.intersect1d(i_x, i_y)
             neigh_bins = i+1+np.argwhere(cond)
 
-            # cond_x = np.logical_and(cond_1, cond_2)
-            # cond_y = np.logical_and(cond_3, cond_4)
-            # cond = np.logical_and(cond_x, cond_y)
-            # neigh_bins = np.argwhere(cond)
-            # neigh_binx = np.argwhere(cond_x)
-            # neigh_biny = np.argwhere(cond_y)
-            # neigh_binx = np.argwhere(self.vector[-1][i+1:,3] > (bin_ix-2) & self.vector[-1][i+1:,3] < (bin_ix+2) )
-            # neigh_biny = np.argwhere(self.vector[-1][i+1:,4] > (bin_iy-2) & self.vector[-1][i+1:,4] < (bin_iy+2) )
-            # neigh_bins = neigh_binx[neigh_binx == neigh_biny]
-            # neigh_bins = [neigh_binx,neigh_biny]
             distance_sq = (np.remainder(self.vector[-1][i,0] - self.vector[-1][neigh_bins,0] + self.L / 2., self.L) - self.L / 2.) ** 2 \
                           + (np.remainder(self.vector[-1][i,0] - self.vector[-1][neigh_bins,0] + self.L / 2., self.L) - self.L / 2.) ** 2
-            # distance_sq = (self.vector[-1][i,0] - self.vector[-1][neigh_bins,0]) ** 2 + (self.vector[-1][i,1] - self.vector[-1][neigh_bins,1]) ** 2
-            # distance_sq = (self.vector[-1][i,0] - self.vector[-1][i+1:,0]) ** 2 + (self.vector[-1][i,1] - self.vector[-1][i+1:,1]) ** 2
             indices = np.argwhere(distance_sq < self.R ** 2)
-            """THE PROBLEM IS THAT HERE NP.ARGWHERE TAKES THE WRONG INDICES"""
-            indices = neigh_bins[indices]
+            indices = neigh_bins[indices] ##THis is here because distance_sq is an array with only the distance of the
+            # birds in the neighbouring bins, so when you ask where distance<R it gives you the indices of this neighbouring bins
+            #, so we need to go back to the actual indices of self.vector with neigh_bins
             Neighbours[i,indices] = self.vector[-1][i,2]
             Neighbours[indices,i] = self.vector[-1][indices,2]
 ### WHEN YOU CHANGE THE ORDER OF INDICES FOR I IN HERE IT CHANGES EVERYTHINGGG, WHYYYY???? BECUASE OF the SUMMING OF THE AXIS?
 
-        # print(Neighbours)
         n = np.count_nonzero(~np.isnan(Neighbours),axis=0)
-        # n = np.count_nonzero(Neighbours, axis=1)
         avg_theta_r_cos = np.nansum(np.cos(Neighbours), axis=0) / n
         avg_theta_r_sin = np.nansum(np.sin(Neighbours), axis=0) / n
         theta_avg_r = np.arctan2(avg_theta_r_sin, avg_theta_r_cos) ### WARNING arctan2 gives 0 or pi in the case of two exactly opposite thetas
-        # TODO make sure there are no thetas going over 2pi and under 0
         self.vector[-1][:,2] = theta_avg_r + np.random.uniform(-self.eta / 2, self.eta / 2, size=np.size(theta_avg_r))
 
-    # def check_transition(self): # we are not sure if this is a good idea, nevertheless we can plot it
-    #
-    #     last_thetas = self.vector[-1][:][2]
-    #     avg_theta_r_cos = np.matrix.sum(np.cos(last_thetas), axis=1) / self.N
-    #     avg_theta_r_sin = np.matrix.sum(np.sin(last_thetas), axis=1) / self.N
-    #     theta_avg_last = np.atan2(avg_theta_r_sin, avg_theta_r_cos)
-    #
-    #     second_to_last_thetas = self.vector[-2][:][2]
-    #     avg_theta_r_cos = np.matrix.sum(np.cos(second_to_last_thetas), axis=1) / self.N
-    #     avg_theta_r_sin = np.matrix.sum(np.sin(second_to_last_thetas), axis=1) / self.N
-    #     theta_avg_second_to_last = np.atan2(avg_theta_r_sin, avg_theta_r_cos)
-    #
-    #     diff = np.min(np.abs(theta_avg_last-theta_avg_second_to_last),np.abs(theta_avg_last-theta_avg_second_to_last-2*np.pi))
 
     def order_parameter_calculation(self):
         # Absolut value of the average normslized velocity is the order parameter of the system and checking its behaviour determines the phase transition
@@ -212,7 +150,7 @@ class Bird():
 
     def update(self):
         for i in range(self.Nsteps):  #i is the loop variable of the timestep, hard capped at 10 for now
-            if i%10 == 0: print(i)
+            # if i%10 == 0: print(i)
             self.evolve()
             self.new_theta()
 
