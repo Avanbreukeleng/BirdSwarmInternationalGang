@@ -8,6 +8,9 @@ import pickle
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
+import time
+
+
 # from Parameter_variation import *
 
 # This is the branch before optimisation
@@ -136,21 +139,22 @@ if __name__ == '__main__':
     seed = 1
     vel = 0.033
     N = 200
-    R = 0.1
+    R = 1
     L = 10
     eta = 0.1
-    dt = 0.1
+    dt = 1
     Nruns = 1000
     # Run simulation
 
     RUN = True
-    ANIMATE = True
+    ANIMATE = False
     SAVE = False
     READ = False
 
+    start_time = time.time()
     if RUN:
         swarm = Bird(seed,vel,N,R,L,eta,dt,Nruns)
-
+    print("--- %s seconds ---" % (time.time() - start_time))
     # Plots and animations:
     # Set to True to animate swarm motion
 
