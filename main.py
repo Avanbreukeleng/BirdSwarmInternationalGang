@@ -167,7 +167,7 @@ if __name__ == '__main__':
     vel = 0.033
     N = 100
     R = 1
-    L = 50
+    L = 20
     eta = 0.3
     dt = 1
     Nsteps = 300
