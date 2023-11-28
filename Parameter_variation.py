@@ -26,7 +26,7 @@ class ParameterModifier:
 
 
 # How to use ParameterModifier:
-inparam = np.array([1, 0.033, 200, 2, 10, 0.1, 1, 100])  # first set of parameters
+inparam = np.array([1, 0.033, 2,1, 10, 0.1, 1, 100])  # first set of parameters
 parameter_modifier = ParameterModifier(inparam)  # Call the param modifier class
 new_N = np.linspace(10, 150, num=15)
 new_eta = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.3, 1.5, 2.0, 2.5, 3.0])
@@ -85,6 +85,7 @@ class Bird_Simulator():  # This class' goal is to yield an array [v_a, rho, eta]
 init_phase = np.array([[1, 2, 3]])  # Initialize the phase trans parameter array to be able to stack other arrays on it.
 bird_sim = Bird_Simulator(init_phase)
 bird_sim.run_all_bird(resulting_params)
+#The following three arrays are the ones we use for plotting the order parameters
 N_matrix = bird_sim.N_matrix
 eta_matrix = bird_sim.eta_matrix
 va_matrix = bird_sim.va_matrix
