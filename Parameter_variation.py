@@ -48,7 +48,7 @@ class Bird_Simulator():  # This class' goal is to yield an array [v_a, rho, eta]
         va_matrix = []  # Initialize an empty list to store va vectors, this has essentially the same purpose as init_phase, but for a different array
         for j in range(len(resulting_params[:, 1])):  # this loops over all distinct sets of parameters
             Pset = resulting_params[j, :]
-            print("Pset",Pset)
+            # print("Pset",Pset)
             Sim1 = Bird(int(Pset[0]), Pset[1], int(Pset[2]), Pset[3], Pset[4], Pset[5], Pset[6],
                         int(Pset[7]))  # This is not elegant but it works
             Nset = resulting_params[j, 2]
@@ -93,27 +93,30 @@ print(va_matrix)
 
 
 # NOTICE: phase_transition_parameters is an array [v_a,rho, eta] example [[1,2,3],[4,5,6], ...] also I AM NOT SURE IF I need to call it like self.sth
-    def plot_phase_transition(phase_matrix):
+def plot_phase_transition(va_matrix, N_matrix, eta_matrix):
     fig, ax = plt.subplots()
     # Plot order parameter as a function of time for each set of initial parameters
-        for i in range(len(va_matrix[0])):
-            plt.title("Evolution of Order Parameter in time for initial set", i)
-            plt.xlabel("Time Step")
-            plt.ylabel("Order Parameter")
-            plt.plot(np.arange(0, len(va_matrix[1]), 1), va_matrix[i], '-', color='g')
+    # for i in range(len(va_matrix[:,0])):
+    #     plt.title("Evolution of Order Parameter in time for initial set %d" %i)
+    #     plt.xlabel("Time Step")
+    #     plt.ylabel("Order Parameter")
+    #     plt.plot(np.arange(0, len(va_matrix[0]), 1), va_matrix[i], '-', color='g')
     # Plot mean order parameter as a function of density when noise is fixed
-        plt.title("Order Parameter vs Density")
-        plt.xlabel("Density")
-        plt.ylabel("Order Parameter")
-        plt.plot(N_matrix[:, 1], N_matrix[:, 0], 'o', color='r')
+    plt.title("Order Parameter vs Density")
+    plt.xlabel("Density")
+    plt.ylabel("Order Parameter")
+    plt.plot(N_matrix[:, 1], N_matrix[:, 0], 'o', color='r')
     # Plot mean order parameter as a function of noise when density is fixed
-        plt.title('Order Parameter vs eta')
-        plt.xlabel('Eta')
-        plt.ylabel('Order Parameter')
-        plt.plot(eta_matrix[:, 2], eta_matrix[:, 0], 'o', color='b')
-        plt.show()
+    # plt.title('Order Parameter vs eta')
+    # plt.xlabel('Eta')
+    # plt.ylabel('Order Parameter')
+    # plt.plot(eta_matrix[:, 2], eta_matrix[:, 0], 'o', color='b')
+    plt.show()
 
+
+plot = plot_phase_transition(va_matrix, N_matrix, eta_matrix)
 PLOT = True
+
 
 plot = Bird_Simulator.plo
 

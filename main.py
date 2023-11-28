@@ -8,6 +8,7 @@ import pickle
 
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import matplotlib.cm as cm
 
 import time
 
@@ -164,22 +165,22 @@ class Bird():
 if __name__ == '__main__':
     seed = 1
     vel = 0.033
-    N = 5000
-    R = 0.1
-    L = 100
-    eta = 0.1
+    N = 100
+    R = 1
+    L = 50
+    eta = 0.3
     dt = 1
-    Nruns = 50
+    Nsteps = 300
     # Run simulation
 
     RUN = True
-    ANIMATE = False
+    ANIMATE = True
     SAVE = False
     READ = False
 
     start_time = time.time()
     if RUN:
-        swarm = Bird(seed,vel,N,R,L,eta,dt,Nruns)
+        swarm = Bird(seed,vel,N,R,L,eta,dt,Nsteps)
     print("--- %s seconds ---" % (time.time() - start_time))
     # Plots and animations:
     # Set to True to animate swarm motion
@@ -196,18 +197,52 @@ if __name__ == '__main__':
             swarm = pickle.load(pickle_in)
 
     if ANIMATE:
-        def make_step(i):
-            # swarm.step(dt)
-            # line = ax.quiver(swarm.vector[i][:,0:1],np.cos(swarm.vector[i][:,2]),np.sin(swarm.vector[i][:,2]))
-            line.set_data(swarm.vector[i][:, 0], swarm.vector[i][:, 1])
-            return line
+        def make_step(i):  # New animation with arrows and color, for old dot-only check version of git prior to  nov 28
+            ax.clear()  # Clear the previous frame
+            ax.set_xlim(0, L)
+            ax.set_ylim(0, L)
 
-        fig = plt.figure()
-        ax = fig.add_subplot(111, aspect='equal')
-        line, = ax.plot([], [], 'bo', ms=R/L*100)
-        ax.set_xlim(0, L)
-        ax.set_ylim(0, L)
-        bird_animation = animation.FuncAnimation(fig, make_step, frames=Nsteps, interval=50, blit=False)
+            # Calculate the color based on the orientation (theta)
+            colors = np.pi + np.arctan2(np.sin(swarm.vector[i][:, 2]), np.cos(swarm.vector[i][:, 2]))
+
+            # Use quiver to plot arrows with color based on orientation
+            arrows = ax.quiver(
+                swarm.vector[i][:, 0],  # x-coordinates
+                swarm.vector[i][:, 1],  # y-coordinates
+                np.cos(swarm.vector[i][:, 2]),  # cos(theta) as x-component of arrow
+                np.sin(swarm.vector[i][:, 2]),  # sin(theta) as y-component of arrow
+                scale = 1,
+                width = R/L/2,
+                scale_units = 'xy',  # use the same scale for x and y directions
+                color = cm.twilight(colors / (2 * np.pi)),
+                # Here we use the circular color map twilight to assign a color to the bird's directions
+                headwidth = 5,
+                headlength = 5  # width and length of the arrowhead
+            )
+
+            return arrows
+
+
+        fig, ax = plt.subplots()
+        bird_animation = animation.FuncAnimation(fig, make_step, frames=Nsteps, interval=1, blit=False)
         plt.show()
+
+
+
+    # if ANIMATE:
+    #     def make_step(i):
+    #         # swarm.step(dt)
+    #         # line = ax.quiver(swarm.vector[i][:,0:1],np.cos(swarm.vector[i][:,2]),np.sin(swarm.vector[i][:,2]))
+    #         line.set_data(swarm.vector[i][:, 0], swarm.vector[i][:, 1])
+    #         return line
+    #
+    #     fig = plt.figure()
+    #     ax = fig.add_subplot(111, aspect='equal')
+    #     line, = ax.plot([], [],'o', ms=R/L*100)
+    #     ax.set_xlim(0, L)
+    #     ax.set_ylim(0, L)
+    #     bird_animation = animation.FuncAnimation(fig, make_step, frames=Nsteps, interval=50, blit=False)
+    #     plt.show()
+
     # Create input geometry from TOML file
     # inp = geometry('values.toml')
