@@ -90,12 +90,12 @@ N_matrix = bird_sim.N_matrix
 eta_matrix = bird_sim.eta_matrix
 va_matrix = bird_sim.va_matrix
 
-print(va_matrix)
+#print(va_matrix)
 
 
 # NOTICE: phase_transition_parameters is an array [v_a,rho, eta] example [[1,2,3],[4,5,6], ...] also I AM NOT SURE IF I need to call it like self.sth
 def plot_phase_transition(va_matrix, N_matrix, eta_matrix):
-    fig, ax = plt.subplots()
+    # fig, ax = plt.subplots()
     # Plot order parameter as a function of time for each set of initial parameters
     # for i in range(len(va_matrix[:,0])):
     #     plt.title("Evolution of Order Parameter in time for initial set %d" %i)
@@ -103,20 +103,23 @@ def plot_phase_transition(va_matrix, N_matrix, eta_matrix):
     #     plt.ylabel("Order Parameter")
     #     plt.plot(np.arange(0, len(va_matrix[0]), 1), va_matrix[i], '-', color='g')
     # Plot mean order parameter as a function of density when noise is fixed
+    fig, ax = plt.subplots()
     plt.title("Order Parameter vs Density")
     plt.xlabel("Density")
     plt.ylabel("Order Parameter")
     plt.plot(N_matrix[:, 1], N_matrix[:, 0], 'o', color='r')
+    plt.show()
     # Plot mean order parameter as a function of noise when density is fixed
-    # plt.title('Order Parameter vs eta')
-    # plt.xlabel('Eta')
-    # plt.ylabel('Order Parameter')
-    # plt.plot(eta_matrix[:, 2], eta_matrix[:, 0], 'o', color='b')
+    fig, ax = plt.subplots()
+    plt.title('Order Parameter vs eta')
+    plt.xlabel('Eta')
+    plt.ylabel('Order Parameter')
+    plt.plot(eta_matrix[:, 2], eta_matrix[:, 0], 'o', color='b')
     plt.show()
 
 
 plot = plot_phase_transition(va_matrix, N_matrix, eta_matrix)
-PLOT = True
+#PLOT = True
 
 
 
