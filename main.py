@@ -91,7 +91,7 @@ class Bird():
         self.vector = np.concatenate((self.vector, vector_new_reshaped), axis=0)
         self.bin_update()
 
-    def new_theta(self):
+    def new_theta(self): #TODO make a stepby step example with N=5 maybe to explain logic
         # Function to calculate the average angle of neighbouring boids and update
         Neighbours = np.full((self.N, self.N), np.nan)
         np.fill_diagonal(Neighbours, self.vector[-1][:,2]) #Since every bird is its own neighbour
@@ -125,7 +125,6 @@ class Bird():
             #, so we need to go back to the actual indices of self.vector with neigh_bins
             Neighbours[i,indices] = self.vector[-1][i,2]
             Neighbours[indices,i] = self.vector[-1][indices,2]
-### WHEN YOU CHANGE THE ORDER OF INDICES FOR I IN HERE IT CHANGES EVERYTHINGGG, WHYYYY???? BECUASE OF the SUMMING OF THE AXIS?
 
         n = np.count_nonzero(~np.isnan(Neighbours),axis=0)
         avg_theta_r_cos = np.nansum(np.cos(Neighbours), axis=0) / n
