@@ -145,7 +145,7 @@ class Bird():
             # i_2 = np.argwhere(self.vector[-1][i+1:,3] < (bin_ix+2))
             # i_3 = np.argwhere(self.vector[-1][i+1:,4] > (bin_iy-2))
             # i_4 = np.argwhere(self.vector[-1][i+1:,4] < (bin_iy+2))
-
+            #
             # i_x = np.intersect1d(i_1, i_2)
             # i_y = np.intersect1d(i_3, i_4)
             # neigh_bins = i+1+np.intersect1d(i_x, i_y)
@@ -211,7 +211,7 @@ class Bird():
 
     def update(self):
         for i in range(self.Nsteps):  #i is the loop variable of the timestep, hard capped at 10 for now
-            # if i%10 == 0: print(i)
+            if i%10 == 0: print(i)
             self.evolve()
             self.new_theta()
 
@@ -226,12 +226,12 @@ class Bird():
 if __name__ == '__main__':
     seed = 1
     vel = 0.033
-    N = 200
+    N = 5000
     R = 0.1
-    L = 10
+    L = 100
     eta = 0.1
-    dt = 0.1
-    Nruns = 1000
+    dt = 1
+    Nruns = 50
     # Run simulation
 
     RUN = True
@@ -242,7 +242,7 @@ if __name__ == '__main__':
     start_time = time.time()
     if RUN:
         swarm = Bird(seed,vel,N,R,L,eta,dt,Nruns)
-
+    print("--- %s seconds ---" % (time.time() - start_time))
     # Plots and animations:
     # Set to True to animate swarm motion
 
