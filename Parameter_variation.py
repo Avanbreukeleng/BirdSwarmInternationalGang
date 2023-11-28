@@ -118,11 +118,6 @@ plot = plot_phase_transition(va_matrix, N_matrix, eta_matrix)
 PLOT = True
 
 
-plot = Bird_Simulator.plo
-
-# if PLOT:
-# Call the plot_phase_transition function
-# plot_phase_transition(resulting_params)
 
 
 
