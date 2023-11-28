@@ -115,7 +115,7 @@ print(va_matrix)
 
 PLOT = True
 
-plot =
+plot = Bird_Simulator.plo
 
 # if PLOT:
 # Call the plot_phase_transition function
