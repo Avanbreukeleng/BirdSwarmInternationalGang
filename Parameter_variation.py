@@ -93,27 +93,29 @@ print(va_matrix)
 
 
 # NOTICE: phase_transition_parameters is an array [v_a,rho, eta] example [[1,2,3],[4,5,6], ...] also I AM NOT SURE IF I need to call it like self.sth
-def plot_phase_transition(phase_matrix):
+    def plot_phase_transition(phase_matrix):
     fig, ax = plt.subplots()
-    # Plot order parameter as a function of time
-    plt.title("Evolution of Order Parameter in time")
-    plt.xlabel("Time Step")
-    plt.ylabel("Order Parameter")
-    plt.plot(np.arange(0, len(va), 1), va, '-', color='g')
+    # Plot order parameter as a function of time for each set of initial parameters
+        for i in range(len(va_matrix[0])):
+            plt.title("Evolution of Order Parameter in time for initial set", i)
+            plt.xlabel("Time Step")
+            plt.ylabel("Order Parameter")
+            plt.plot(np.arange(0, len(va_matrix[1]), 1), va_matrix[i], '-', color='g')
     # Plot mean order parameter as a function of density when noise is fixed
-    plt.title("Order Parameter vs Density")
-    plt.xlabel("Density")
-    plt.ylabel("Order Parameter")
-    plt.plot(N_matrix[:, 1], N_matrix[:, 0], 'o', color='r')
+        plt.title("Order Parameter vs Density")
+        plt.xlabel("Density")
+        plt.ylabel("Order Parameter")
+        plt.plot(N_matrix[:, 1], N_matrix[:, 0], 'o', color='r')
     # Plot mean order parameter as a function of noise when density is fixed
-    plt.title('Order Parameter vs eta')
-    plt.xlabel('Eta')
-    plt.ylabel('Order Parameter')
-    plt.plot(eta_matrix[:, 2], eta_matrix[:, 0], 'o', color='b')
-    plt.show()
-
+        plt.title('Order Parameter vs eta')
+        plt.xlabel('Eta')
+        plt.ylabel('Order Parameter')
+        plt.plot(eta_matrix[:, 2], eta_matrix[:, 0], 'o', color='b')
+        plt.show()
 
 PLOT = True
+
+plot =
 
 # if PLOT:
 # Call the plot_phase_transition function
