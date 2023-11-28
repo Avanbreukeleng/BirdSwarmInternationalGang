@@ -117,13 +117,14 @@ class Bird():
         # v_a is an array with Nsteps components, each component is the order parameter for each step
         # Also we need the mean value of v_a after transient phase
         r = v_a[v_a > 0.5]  # Eliminating values of order parameters in the transient regime, we assumed if order parameter is more than 0.5 then teh system has faced the phase transition
-        mean_v_a = np.sum(r) / len(r)  # Mean value of order parameter for each set of initial condition
+        # mean_v_a = np.sum(r) / len(r)
+        mean_v_a = np.mean(r) # Mean value of order parameter for each set of initial condition
         return v_a, mean_v_a  # TODO check what happens when no va are above 0.5
         #TODO plot v_a as function of rho and eta to see the phase transition
 
     def update(self):
         for i in range(self.Nsteps):  #i is the loop variable of the timestep, hard capped at 10 for now
-            if i%10 == 0: print(i)
+            # if i%10 == 0: print(i)
             self.evolve()
             self.new_theta()
 
@@ -138,8 +139,8 @@ class Bird():
 if __name__ == '__main__':
     seed = 1
     vel = 0.033
-    N = 200
-    R = 1
+    N = 1000
+    R = 0.1
     L = 10
     eta = 0.1
     dt = 1
