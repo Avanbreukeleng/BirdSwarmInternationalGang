@@ -26,7 +26,7 @@ class ParameterModifier:
 
 
 # How to use ParameterModifier:
-inparam = np.array([1, 0.033, 40, 1, 20, 0.1, 1, 1000])  # first set of parameters
+inparam = np.array([1, 0.033, 400, 1, 20, 0.1, 1, 1000])  # first set of parameters
 parameter_modifier = ParameterModifier(inparam)  # Call the param modifier class
 # new_N = np.linspace(40, 150, num=15) #Here N is the number of birds
 new_N = np.array([])
@@ -85,7 +85,7 @@ class Bird_Simulator():  # This class' goal is to yield an array [v_a, rho, eta]
         return self.va_matrix
 
 
-SAVE = False
+SAVE = True
 
 
 # How to use Run_all birds
