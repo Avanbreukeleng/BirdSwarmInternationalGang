@@ -26,9 +26,9 @@ class ParameterModifier:
 
 
 # How to use ParameterModifier:
-inparam = np.array([1, 0.033, 400, 1, 20, 0.1, 1, 1000])  # first set of parameters
+inparam = np.array([1, 0.033, 40, 1, 20, 0.1, 1, 1000])  # first set of parameters
 parameter_modifier = ParameterModifier(inparam)  # Call the param modifier class
-# new_N = np.linspace(40, 150, num=15) #Here N is the number of birds
+# new_N = np.linspace(40, 150, num=15) #Here N is the PLnumber of birds
 new_N = np.array([])
 # new_eta = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.3, 1.5, 2.0, 2.5, 3.0])
 # new_eta = np.linspace(0,5,50)
