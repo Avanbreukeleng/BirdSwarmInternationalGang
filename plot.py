@@ -26,7 +26,26 @@ def plot_va_eta(eta_matrix, shape, color, labels):
     plt.legend()
 
 
+plot_va_eta(bird_sim1.eta_matrix, 's','#b68cb8','N = 40')
+plot_va_eta(bird_sim2.eta_matrix, 'x','#314cb6','N = 100')
+plot_va_eta(bird_sim3.eta_matrix,'+' ,'#F18F01', 'N = 400')
+plot_va_eta(bird_sim4.eta_matrix,'^' ,'#C73E1D', 'N = 1000')
+plt.show()
 
+def plot_va_N(N_matrix, shape, color, labels):
+    # Plot mean order parameter as a function of density when noise is fixed
+    plt.title("Order Parameter vs Density")
+    plt.xlabel("ρ")
+    plt.ylabel("$v_a$")
+    plt.plot(N_matrix[:, 1], N_matrix[:, 0], shape, markerfacecolor='none', markeredgecolor=color, label=labels)
+    plt.legend()
+
+
+plot_va_N(bird_sim1.N_matrix, 's','#b68cb8','η = 1.5 rad')
+#plot_va_N(bird_sim2.N_matrix, 'x','#314cb6','N = 100')
+#plot_va_N(bird_sim3.N_matrix, '+','#F18F01', 'N = 400')
+#plot_va_N(bird_sim4.N_matrix,'^' ,'#C73E1D', 'N = 4000)
+plt.show()
 
 
 
