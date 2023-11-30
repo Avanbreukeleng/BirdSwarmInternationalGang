@@ -143,10 +143,10 @@ class Bird():
         if len(r) != 0:
             mean_v_a = np.sum(r) / len(r)  # Mean value of order parameter for each set of initial condition
         else:
-            mean_v_a = 0
-            print('Mean v_a does not reach 0.5')
-        return v_a, mean_v_a  # TODO check what happens when no va are above 0.5
-        #TODO plot v_a as function of rho and eta to see the phase transition
+            mean_v_a = v_a[-1]
+            # print('There is no phase transition in the system. Mean v_a is', mean_v_a)
+        return v_a, mean_v_a
+
 
     def update(self):
         for i in range(self.Nsteps):  #i is the loop variable of the timestep, hard capped at 10 for now
@@ -155,7 +155,7 @@ class Bird():
             self.new_theta()
 
         #TODO Lastly, check if the dispersion of average theta is close to the noise ;
-        self.va = self.order_parameter_calculation()
+        self.va , self.mean_va = self.order_parameter_calculation()
         #if dispersion in range()
         #Timestep = i
         #print(Timestep)
@@ -168,7 +168,7 @@ if __name__ == '__main__':
     N = 100
     R = 1
     L = 20
-    eta = 0.3
+    eta = 1.5
     dt = 1
     Nsteps = 300
     # Run simulation
