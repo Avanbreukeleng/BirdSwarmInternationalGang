@@ -80,46 +80,62 @@ class Bird_Simulator():  # This class' goal is to yield an array [v_a, rho, eta]
         return self.va_matrix
 
 
-# How to use Run_all birds
-# Has to be used after the Parameter Modifier Class, so that resulting_params is defined
-init_phase = np.array([[1, 2, 3]])  # Initialize the phase trans parameter array to be able to stack other arrays on it.
-bird_sim = Bird_Simulator(init_phase)
-bird_sim.run_all_bird(resulting_params)
-#The following three arrays are the ones we use for plotting the order parameters
-N_matrix = bird_sim.N_matrix
-eta_matrix = bird_sim.eta_matrix
-va_matrix = bird_sim.va_matrix
+RUN = True
+SAVE = True
+READ = False
+PLOT = False
 
-#print(va_matrix)
+if RUN:
+    # How to use Run_all birds
+    # Has to be used after the Parameter Modifier Class, so that resulting_params is defined
+    init_phase = np.array([[1, 2, 3]])  # Initialize the phase trans parameter array to be able to stack other arrays on it.
+    bird_sim = Bird_Simulator(init_phase)
+    bird_sim.run_all_bird(resulting_params)
+    #The following three arrays are the ones we use for plotting the order parameters
+    N_matrix = bird_sim.N_matrix
+    eta_matrix = bird_sim.eta_matrix
+    va_matrix = bird_sim.va_matrix
 
+if SAVE:
+    # np.savetxt("Vector1.csv", swarm.vector, delimiter=",")
+    name = input('Desired file name identification?\t')
+    with open('Output_files/' + name + '_pickle_param_swarm.csv', 'wb') as pickle_out:
+        pickle.dump(bird_sim, pickle_out)
 
-# NOTICE: phase_transition_parameters is an array [v_a,rho, eta] example [[1,2,3],[4,5,6], ...] also I AM NOT SURE IF I need to call it like self.sth
-def plot_phase_transition(va_matrix, N_matrix, eta_matrix):
-    # fig, ax = plt.subplots()
-    # Plot order parameter as a function of time for each set of initial parameters
-    # for i in range(len(va_matrix[:,0])):
-    #     plt.title("Evolution of Order Parameter in time for initial set %d" %i)
-    #     plt.xlabel("Time Step")
-    #     plt.ylabel("Order Parameter")
-    #     plt.plot(np.arange(0, len(va_matrix[0]), 1), va_matrix[i], '-', color='g')
-    # Plot mean order parameter as a function of density when noise is fixed
-    fig, ax = plt.subplots()
-    plt.title("Order Parameter vs Density")
-    plt.xlabel("Density")
-    plt.ylabel("Order Parameter")
-    plt.plot(N_matrix[:, 1], N_matrix[:, 0], 'o', color='r')
-    plt.show()
-    # Plot mean order parameter as a function of noise when density is fixed
-    fig, ax = plt.subplots()
-    plt.title('Order Parameter vs eta')
-    plt.xlabel('Eta')
-    plt.ylabel('Order Parameter')
-    plt.plot(eta_matrix[:, 2], eta_matrix[:, 0], 'o', color='b')
-    plt.show()
+if READ:
+    name = input('Desired file name identification?\t')
+    with open('Output_files/' + name + '_pickle_swarm.csv',
+              "rb") as pickle_in:  # "rb" because we want to read in binary mode
+        bird_sim = pickle.load(pickle_in)
 
 
-plot = plot_phase_transition(va_matrix, N_matrix, eta_matrix)
-#PLOT = True
+    if PLOT:
+    # NOTICE: phase_transition_parameters is an array [v_a,rho, eta] example [[1,2,3],[4,5,6], ...] also I AM NOT SURE IF I need to call it like self.sth
+    def plot_phase_transition(va_matrix, N_matrix, eta_matrix):
+        # fig, ax = plt.subplots()
+        # Plot order parameter as a function of time for each set of initial parameters
+        # for i in range(len(va_matrix[:,0])):
+        #     plt.title("Evolution of Order Parameter in time for initial set %d" %i)
+        #     plt.xlabel("Time Step")
+        #     plt.ylabel("Order Parameter")
+        #     plt.plot(np.arange(0, len(va_matrix[0]), 1), va_matrix[i], '-', color='g')
+        # Plot mean order parameter as a function of density when noise is fixed
+        fig, ax = plt.subplots()
+        plt.title("Order Parameter vs Density")
+        plt.xlabel("Density")
+        plt.ylabel("Order Parameter")
+        plt.plot(N_matrix[:, 1], N_matrix[:, 0], 'o', color='r')
+        plt.show()
+        # Plot mean order parameter as a function of noise when density is fixed
+        fig, ax = plt.subplots()
+        plt.title('Order Parameter vs eta')
+        plt.xlabel('Eta')
+        plt.ylabel('Order Parameter')
+        plt.plot(eta_matrix[:, 2], eta_matrix[:, 0], 'o', color='b')
+        plt.show()
+
+    plot = plot_phase_transition(bird_sim.va_matrix, bird_sim.N_matrix, bird_sim.eta_matrix)
+    #PLOT = True
 
 
 
