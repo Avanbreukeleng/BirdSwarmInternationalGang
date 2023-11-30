@@ -4,6 +4,7 @@ import dill
 name = input('Desired file name identification?\t')
 with open('Output_files/' + name + '_pickle_param_swarm.csv',"rb") as pickle_in:  # "rb" because we want to read in binary mode
     bird_sim = dill.load(pickle_in)
+#Commit test
 
 # NOTICE: phase_transition_parameters is an array [v_a,rho, eta] example [[1,2,3],[4,5,6], ...] also I AM NOT SURE IF I need to call it like self.sth
 def plot_phase_transition(va_matrix, N_matrix, eta_matrix):
