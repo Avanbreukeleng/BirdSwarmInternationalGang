@@ -2,6 +2,10 @@ import numpy as np
 from main import Bird
 import dill
 
+dill.settings['recurse'] = True  # Enable recursive pickling
+dill.settings['protocol'] = -1   # Use the highest available protocol
+
+
 # list of the parameters in a Px8 matrix where P is the number of sets of parameters
 # to select one set of parameters select inparam[:,X] where x is one of the columns (=set of param)
 # A set of param is of the form np.array (seed, vel, N, R, L, eta, dt, Nstep)
@@ -26,7 +30,7 @@ class ParameterModifier:
 
 
 # How to use ParameterModifier:
-inparam = np.array([1, 0.033, 40, 1, 20, 0.1, 1, 1000])  # first set of parameters
+inparam = np.array([1, 0.033, 100, 1, 20, 0.1, 1, 1000])  # first set of parameters
 parameter_modifier = ParameterModifier(inparam)  # Call the param modifier class
 # new_N = np.linspace(40, 150, num=15) #Here N is the number of birds
 new_N = np.array([])
@@ -85,7 +89,7 @@ class Bird_Simulator():  # This class' goal is to yield an array [v_a, rho, eta]
         return self.va_matrix
 
 
-SAVE = False
+SAVE = True
 
 
 # How to use Run_all birds
@@ -103,13 +107,3 @@ if SAVE:
     name = input('Desired file name identification?\t')
     with open('Output_files/' + name + '_pickle_param_swarm.csv', 'wb') as pickle_out:
         dill.dump(bird_sim, pickle_out)
-
-
-
-
-
-
-
-
-
-
