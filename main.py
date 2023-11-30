@@ -145,7 +145,7 @@ class Bird():
         # If the system is 
         else:
             mean_v_a = v_a[-1]
-            print('There is no phase transition in the system. Mean v_a is', mean_v_a)
+            # print('There is no phase transition in the system. Mean v_a is', mean_v_a)
         return v_a, mean_v_a
 
 
@@ -156,7 +156,7 @@ class Bird():
             self.new_theta()
 
         #TODO Lastly, check if the dispersion of average theta is close to the noise ;
-        self.va = self.order_parameter_calculation()
+        self.va , self.mean_va = self.order_parameter_calculation()
         #if dispersion in range()
         #Timestep = i
         #print(Timestep)

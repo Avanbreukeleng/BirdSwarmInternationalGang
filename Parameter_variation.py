@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from main import Bird
+import pickle
+import dill
 
 # list of the parameters in a Px8 matrix where P is the number of sets of parameters
 # to select one set of parameters select inparam[:,X] where x is one of the columns (=set of param)
@@ -31,7 +33,8 @@ parameter_modifier = ParameterModifier(inparam)  # Call the param modifier class
 # new_N = np.linspace(40, 150, num=15) #Here N is the number of birds
 new_N = np.array([])
 # new_eta = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.3, 1.5, 2.0, 2.5, 3.0])
-new_eta = np.linspace(0,5,50)
+# new_eta = np.linspace(0,5,50)
+new_eta = np.linspace(0,5,2)
 parameter_modifier.modify_parameters(new_N, new_eta)
 
 resulting_params = parameter_modifier.get_parameters()
@@ -50,6 +53,7 @@ class Bird_Simulator():  # This class' goal is to yield an array [v_a, rho, eta]
     def run_all_bird(self, resulting_params):
         va_matrix = []  # Initialize an empty list to store va vectors, this has essentially the same purpose as init_phase, but for a different array
         for j in range(len(resulting_params[:, 1])):  # this loops over all distinct sets of parameters
+            print(j)
             Pset = resulting_params[j, :]
             # print("Pset",Pset)
             Sim1 = Bird(int(Pset[0]), Pset[1], int(Pset[2]), Pset[3], Pset[4], Pset[5], Pset[6],
@@ -103,7 +107,7 @@ if SAVE:
     # np.savetxt("Vector1.csv", swarm.vector, delimiter=",")
     name = input('Desired file name identification?\t')
     with open('Output_files/' + name + '_pickle_param_swarm.csv', 'wb') as pickle_out:
-        pickle.dump(bird_sim, pickle_out)
+        dill.dump(bird_sim, pickle_out)
 
 if READ:
     name = input('Desired file name identification?\t')
