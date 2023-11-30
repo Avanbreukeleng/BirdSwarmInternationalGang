@@ -28,7 +28,7 @@ class ParameterModifier:
 
 
 # How to use ParameterModifier:
-inparam = np.array([1, 0.033, 40, 1, 20, 0.1, 1, 1000])  # first set of parameters
+inparam = np.array([1, 0.033, 400, 1, 20, 0.1, 1, 1000])  # first set of parameters
 parameter_modifier = ParameterModifier(inparam)  # Call the param modifier class
 # new_N = np.linspace(40, 150, num=15) #Here N is the number of birds
 new_N = np.array([])
@@ -111,8 +111,8 @@ if SAVE:
 
 if READ:
     name = input('Desired file name identification?\t')
-    with open('Output_files/' + name + '_pickle_swarm.csv',"rb") as pickle_in:  # "rb" because we want to read in binary mode
-        bird_sim = pickle.load(pickle_in)
+    with open('Output_files/' + name + '_pickle_param_swarm.csv',"rb") as pickle_in:  # "rb" because we want to read in binary mode
+        bird_sim = dill.load(pickle_in)
 
 
 if PLOT:
