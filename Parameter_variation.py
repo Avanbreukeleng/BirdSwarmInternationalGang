@@ -109,7 +109,7 @@ if READ:
         bird_sim = pickle.load(pickle_in)
 
 
-    if PLOT:
+if PLOT:
     # NOTICE: phase_transition_parameters is an array [v_a,rho, eta] example [[1,2,3],[4,5,6], ...] also I AM NOT SURE IF I need to call it like self.sth
     def plot_phase_transition(va_matrix, N_matrix, eta_matrix):
         # fig, ax = plt.subplots()

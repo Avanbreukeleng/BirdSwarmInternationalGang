@@ -92,7 +92,7 @@ class Bird():
         self.vector = np.concatenate((self.vector, vector_new_reshaped), axis=0)
         self.bin_update()
 
-    def new_theta(self): #TODO make a stepby step example with N=5 maybe to explain logic
+    def new_theta(self): #TODO make a step by step example with N=5 maybe to explain logic
         # Function to calculate the average angle of neighbouring boids and update
         Neighbours = np.full((self.N, self.N), np.nan)
         np.fill_diagonal(Neighbours, self.vector[-1][:,2]) #Since every bird is its own neighbour
@@ -168,7 +168,7 @@ if __name__ == '__main__':
     N = 100
     R = 1
     L = 20
-    eta = 0.3
+    eta = 1.5
     dt = 1
     Nsteps = 300
     # Run simulation
