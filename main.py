@@ -58,12 +58,12 @@ class Bird():
     
     def __init__(self,seed,vel,N,R,L,eta,dt,Nsteps):
         self.vector = self.init_vector(int(seed),int(N),L)   # This is the NStepsx3 array that stores x,y and theta value at each step
-                                                 #At each step, add another layer to the array (in 3D)
-        self.velocity = vel                      # Constant norm of velocity for all birds
-        self.R = R                               # Radius of influence of each boid
-        self.L = L                               # Size of the world
-        self.eta = eta                           # Interval of noise in theta
-        self.dt = dt                             # Constant time step
+                                                             # At each step, add another layer to the array (in 3D)
+        self.velocity = vel                                  # Constant norm of velocity for all birds
+        self.R = R                                           # Radius of influence of each boid
+        self.L = L                                           # Size of the world
+        self.eta = eta                                       # Interval of noise in theta
+        self.dt = dt                                         # Constant time step
         self.N = N
         self.Nsteps = Nsteps
         self.Lbins = L/int(L/R)
@@ -121,7 +121,7 @@ class Bird():
             distance_sq = (np.remainder(self.vector[-1][i,0] - self.vector[-1][neigh_bins,0] + self.L / 2., self.L) - self.L / 2.) ** 2 \
                           + (np.remainder(self.vector[-1][i,0] - self.vector[-1][neigh_bins,0] + self.L / 2., self.L) - self.L / 2.) ** 2
             indices = np.argwhere(distance_sq < self.R ** 2)
-            indices = neigh_bins[indices] ##THis is here because distance_sq is an array with only the distance of the
+            indices = neigh_bins[indices] ##This is here because distance_sq is an array with only the distance of the
             # birds in the neighbouring bins, so when you ask where distance<R it gives you the indices of this neighbouring bins
             #, so we need to go back to the actual indices of self.vector with neigh_bins
             Neighbours[i,indices] = self.vector[-1][i,2]
@@ -137,11 +137,13 @@ class Bird():
     def order_parameter_calculation(self):
         # Absolut value of the average normslized velocity is the order parameter of the system and checking its behaviour determines the phase transition
         v_a = np.sqrt((np.sum(np.cos(self.vector[:,:,2]),axis=1))**2 + (np.sum(np.sin(self.vector[:,:,2]),axis=1))**2)/self.N
-        # v_a is an array with Nsteps components, each component is the order parameter for each step
-        # Also we need the mean value of v_a after transient phase:
-        r = v_a[v_a > 0.5]  # Eliminating values of order parameters in the transient regime, we assumed if order parameter is more than 0.5 then teh system has faced the phase transition
+        # v_a is an array with Nsteps components, each component is the order parameter for each time step
+        # Also we need the mean value of v_a for each set of initial parameters: If it is equal to 1 it means all the birds fly in the same direction. If it is 0 it means birds fly randomly.
+        # Eliminating values of order parameters in the transient regime, we assumed v_a < 0.5 means system is in transient regime
+        r = v_a[v_a > 0.5]
         if len(r) != 0:
-            mean_v_a = np.sum(r) / len(r)  # Mean value of order parameter for each set of initial condition
+            mean_v_a = np.sum(r) / len(r)
+        # If the system never reaches the phase transition, we take the v_a of the last time step as the mean v_a
         else:
             mean_v_a = v_a[-1]
             # print('There is no phase transition in the system. Mean v_a is', mean_v_a)
