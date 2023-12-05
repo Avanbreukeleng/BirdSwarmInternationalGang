@@ -28,15 +28,16 @@ class ParameterModifier:
     def get_parameters(self):
         return self.parameters
 
+#For scaling: density rho 4.16
 # (seed, vel, N, R, L, eta, dt, Nstep)
 # How to use ParameterModifier:
-inparam = np.array([1, 0.033, 800, 1, 40, 1.5, 1, 300])  # first set of parameters
+inparam = np.array([1, 0.033, 400, 1, 10, 1.5, 1, 1000])  # first set of parameters
 parameter_modifier = ParameterModifier(inparam)  # Call the param modifier class
 new_N = np.linspace(10, 4000, num=0) #Here N is the PLnumber of birds
 # new_N = np.array([])
 # new_eta = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.3, 1.5, 2.0, 2.5, 3.0])
-# new_eta = np.linspace(0,5,50)
-new_eta = np.array([])
+new_eta = np.linspace(0,5,50)
+#new_eta = np.array([])
 parameter_modifier.modify_parameters(new_N, new_eta)
 
 resulting_params = parameter_modifier.get_parameters()
@@ -105,5 +106,5 @@ va_matrix = bird_sim.va_matrix
 if SAVE:
     # np.savetxt("Vector1.csv", swarm.vector, delimiter=",")
     name = input('Desired file name identification?\t')
-    with open('Output_files/' + name + '_pickle_param_swarm.csv', 'wb') as pickle_out:
+    with open('Output_files/' + name + 'swarm.csv', 'wb') as pickle_out:
         dill.dump(bird_sim, pickle_out)
