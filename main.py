@@ -177,12 +177,12 @@ class Bird():
 if __name__ == '__main__':
     seed = 1
     vel = 0.033
-    N = 100
+    N = 5
     R = 1
-    L = 20
-    eta = 1.5
+    L = 5
+    eta = 0.1
     dt = 1
-    Nsteps = 300
+    Nsteps = 1000
     # Run simulation
 
     RUN = True
