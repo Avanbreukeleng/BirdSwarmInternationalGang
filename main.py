@@ -81,7 +81,7 @@ class Bird():
         np.fill_diagonal(Neighbours, self.vector[-1][:,2]) #Since every bird is its own neighbour
         for i in range(0, self.N-1):
             distance_sq = (np.remainder(self.vector[-1][i,0] - self.vector[-1][i+1:,0] + self.L / 2., self.L) - self.L / 2.) ** 2 \
-                          + (np.remainder(self.vector[-1][i,0] - self.vector[-1][i+1:,0] + self.L / 2., self.L) - self.L / 2.) ** 2
+                          + (np.remainder(self.vector[-1][i,1] - self.vector[-1][i+1:,1] + self.L / 2., self.L) - self.L / 2.) ** 2
             indices = np.argwhere(distance_sq < self.R ** 2) # This are the indices of self.vector[-1][neigh_bins,0]
             # distance_sq = (self.vector[-1][i,0] - self.vector[-1][i+1:,0]) ** 2 + (self.vector[-1][i,1] - self.vector[-1][i+1:,1]) ** 2
             # indices = np.argwhere(distance_sq < self.R ** 2)
@@ -112,11 +112,22 @@ class Bird():
     #
     #     diff = np.min(np.abs(theta_avg_last-theta_avg_second_to_last),np.abs(theta_avg_last-theta_avg_second_to_last-2*np.pi))
 
+    # def order_parameter_calculation(self):
+    #     # Absolut value of the average normslized velocity is the order parameter of the system and checking its behaviour determines the phase transition
+    #     v_a = np.sqrt((np.sum(np.cos(self.vector[-1][:,2])))**2 + (np.sum(np.sin(self.vector[-1][:,2])))**2)/self.N
+    #     return v_a
+    #     #TODO plot v_a as function of rho and eta to see the phase transition
+
     def order_parameter_calculation(self):
         # Absolut value of the average normslized velocity is the order parameter of the system and checking its behaviour determines the phase transition
-        v_a = np.sqrt((np.sum(np.cos(self.vector[-1][:,2])))**2 + (np.sum(np.sin(self.vector[-1][:,2])))**2)/self.N
-        return v_a
-        #TODO plot v_a as function of rho and eta to see the phase transition
+        v_a = np.sqrt((np.sum(np.cos(self.vector[:, :, 2]), axis=1)) ** 2 + (
+            np.sum(np.sin(self.vector[:, :, 2]), axis=1)) ** 2) / self.N
+        # v_a is an array with Nsteps components, each component is the order parameter for each time step
+        # Also we need the mean value of v_a for each set of initial parameters
+        mean_v_a = np.mean(v_a[-51:-1])
+        print('Mean v_a is', mean_v_a)
+        return v_a, mean_v_a
+
 
     def update(self):
         for i in range(self.Nsteps):  #i is the loop variable of the timestep, hard capped at 10 for now
@@ -125,7 +136,7 @@ class Bird():
             self.new_theta()
 
         #TODO Lastly, check if the dispersion of average theta is close to the noise ;
-        self.va = self.order_parameter_calculation()
+        self.va,self.mean_v_a = self.order_parameter_calculation()
         #if dispersion in range()
         #Timestep = i
         #print(Timestep)
@@ -144,7 +155,7 @@ if __name__ == '__main__':
     # Run simulation
 
     RUN = True
-    ANIMATE = False
+    ANIMATE = True
     SAVE = False
     READ = False
 
