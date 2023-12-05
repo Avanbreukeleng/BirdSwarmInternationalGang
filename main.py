@@ -143,10 +143,11 @@ class Bird():
         r = v_a[v_a > 0.5]
         if len(r) != 0:
             mean_v_a = np.sum(r) / len(r)
+            print('There IS phase transition in the system. Mean v_a is', mean_v_a)
         # If the system never reaches the phase transition, we take the v_a of the last time step as the mean v_a
         else:
-            mean_v_a = v_a[-1]
-            # print('There is no phase transition in the system. Mean v_a is', mean_v_a)
+            mean_v_a = np.mean(v_a[-6:-1])
+            print('There is NO phase transition in the system. Mean v_a is', mean_v_a)
         return v_a, mean_v_a
 
 

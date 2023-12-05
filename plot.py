@@ -48,6 +48,29 @@ plot_va_N(bird_sim1.N_matrix, 's','#b68cb8','η = 1.5 rad')
 plt.show()
 
 
+#VA VS TIME
+# import matplotlib.pyplot as plt
+# import dill
+# import numpy as np
+
+name = input('Desired file name identification?\t')
+with open( name + '_pickle_param_swarm.csv',"rb") as pickle_in:  # "rb" because we want to read in binary mode
+    bird_sim1 = dill.load(pickle_in)
+
+def plot_va_t(va_matrix, shape, color, labels, index):
+    # Plot order parameter as a function of time for two systems: one reachs phase transition and one does not
+    plt.title("Evolution of Order Parameter")
+    plt.xlabel("t")
+    plt.ylabel("$v_a$")
+    plt.plot(np.arange(0, len(va_matrix[index]), 1), va_matrix[index], shape, markerfacecolor='none',
+             markeredgecolor=color, label=labels)
+    plt.legend()
+
+
+plot_va_t(bird_sim1.va_matrix, 'o', '#b68cb8', 'N = 40 , η = 0', 1)
+plot_va_t(bird_sim1.va_matrix, 's', '#314cb6', 'N = 40, η = 5', -1)
+plt.show()
+
 
 # NOTICE: phase_transition_parameters is an array [v_a,rho, eta] example [[1,2,3],[4,5,6], ...]
 # def plot_phase_transition(va_matrix, N_matrix, eta_matrix):
@@ -4320,25 +4343,3 @@ array([[0.53157641, 0.63240528, 0.6549548 , 0.6589526 , 0.65844116,
         0.89855111, 0.90191477, 0.89866618, 0.90074785, 0.90196679,
         0.90209963, 0.90459312, 0.89918145, 0.89966847, 0.8988611 ,
         0.89905085]])
-#VA VS TIME
-import matplotlib.pyplot as plt
-import dill
-import numpy as np
-
-name = input('Desired file name identification?\t')
-with open( name + '_pickle_param_swarm.csv',"rb") as pickle_in:  # "rb" because we want to read in binary mode
-    bird_sim1 = dill.load(pickle_in)
-
-def plot_va_t(va_matrix, shape, color, labels, index):
-    # Plot order parameter as a function of time for two systems: one reachs phase transition and one does not
-    plt.title("Evolution of Order Parameter")
-    plt.xlabel("t")
-    plt.ylabel("$v_a$")
-    plt.plot(np.arange(0, len(va_matrix[index]), 1), va_matrix[index], shape, markerfacecolor='none',
-             markeredgecolor=color, label=labels)
-    plt.legend()
-
-
-plot_va_t(bird_sim1.va_matrix, 'o', '#b68cb8', 'N = 40 , η = 0', 1)
-plot_va_t(bird_sim1.va_matrix, 's', '#314cb6', 'N = 40, η = 5', -1)
-plt.show()
