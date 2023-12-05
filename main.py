@@ -162,7 +162,7 @@ class Bird():
 
     def update(self):
         for i in range(self.Nsteps):  #i is the loop variable of the timestep, hard capped at 10 for now
-            # if i%10 == 0: print(i)
+            if i%10 == 0: print(i)
             self.evolve()
             self.new_theta()
 
@@ -177,16 +177,16 @@ class Bird():
 if __name__ == '__main__':
     seed = 1
     vel = 0.033
-    N = 5
-    R = 1
-    L = 5
+    N = 5000
+    R = 0.1
+    L = 100
     eta = 0.1
     dt = 1
-    Nsteps = 1000
+    Nsteps = 50
     # Run simulation
 
     RUN = True
-    ANIMATE = True
+    ANIMATE = False
     SAVE = False
     READ = False
 
