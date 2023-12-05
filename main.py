@@ -79,7 +79,7 @@ class Bird():
         # Function to calculate the average angle of neighbouring boids and update
         Neighbours = np.full((self.N, self.N), np.nan)
         np.fill_diagonal(Neighbours, self.vector[-1][:,2]) #Since every bird is its own neighbour
-        for i in range(0, self.N):
+        for i in range(0, self.N-1):
             distance_sq = (self.vector[-1][i,0] - self.vector[-1][i+1:,0]) ** 2 + (self.vector[-1][i,1] - self.vector[-1][i+1:,1]) ** 2
             indices = np.argwhere(distance_sq < self.R ** 2)
             Neighbours[i,i+1+indices] = self.vector[-1][i+1+indices,2]
