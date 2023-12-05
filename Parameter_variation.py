@@ -31,7 +31,7 @@ class ParameterModifier:
 #For scaling: density rho 4.16
 # (seed, vel, N, R, L, eta, dt, Nstep)
 # How to use ParameterModifier:
-inparam = np.array([1, 0.033, 1000, 1, 15.8, 1.5, 1, 1000])  # first set of parameters
+inparam = np.array([1, 0.033, 400, 1, 10, 1.5, 1, 1000])  # first set of parameters
 parameter_modifier = ParameterModifier(inparam)  # Call the param modifier class
 new_N = np.linspace(10, 4000, num=0) #Here N is the PLnumber of birds
 # new_N = np.array([])
