@@ -69,7 +69,8 @@ class Bird():
         self.Lbins = L/int(L/R)
 
         #self.rho = self.N/(self.L)**2
-        self.Nbins = int(self.L/self.Lbins)
+        self.Nbins = int(self.L/self.Lbins) #There are Nbins**2. But each bird has a x and y coordinate bin: their
+                                            # number ranging from 0 to Nbin-1
         self.update()
 
     def bin_update(self): #This function does not change the bins themselves, but tracks which birds are in which bin
@@ -92,21 +93,34 @@ class Bird():
         self.vector = np.concatenate((self.vector, vector_new_reshaped), axis=0)
         self.bin_update()
 
-    def new_theta(self): #TODO make a stepby step example with N=5 maybe to explain logic
+    def new_theta(self):
         # Function to calculate the average angle of neighbouring boids and update
-        Neighbours = np.full((self.N, self.N), np.nan)
+        # This function will be explained with the use of an example case of L = 10, R = 1.
+        Neighbours = np.full((self.N, self.N), np.nan) # Initialise a NxN matrix, that shall keep track of which bird is
+        # neighbour of which other bird. If bird number 1 is neighbour to bird 2, in the corresponding matrix element
+        # (Neighbour[1,2]) the angle of bird 1 is introduced and in Neighbour[2,1] the angle of bird 2 is introduced.
         np.fill_diagonal(Neighbours, self.vector[-1][:,2]) #Since every bird is its own neighbour
         for i in range(0, self.N-1):
-            bin_ix = int(self.vector[-1][i,3])
-            bin_iy = int(self.vector[-1][i,4])
+            bin_ix = int(self.vector[-1][i,3]) # x-bin-coordinate of the ith boid
+            bin_iy = int(self.vector[-1][i,4]) # y-bin-coordinate of the ith boid
 
-            if bin_ix<1 or bin_ix > (self.Nbins-2):
+            # Throughout this function will compute the neighbouring birds of the ith bird, and fill the Neighbour matrix
+            # step by step. But please note, once the neighbours of bird 1 are known, bird 2 does not need to consider
+            # bird 1 in its calculation anymore, as it is already known whether they are neighbours of each other.
+            # This way for bird i, we will only look at birds i+1. And the last bird (N) will already know all its neighbours.
+
+            if bin_ix<1 or bin_ix > (self.Nbins-2): # in case the ith bird is in xbin 0 or 9 (out of 10-xbins) we
+                # need to consider the boids in binx [9,0,1] or [8,9,0] respectively. This comes from transparent BC.
                 cond_x = np.logical_or(self.vector[-1][i + 1:, 3] > (bin_ix - 2) % self.Nbins,
                                        self.vector[-1][i + 1:, 3] < (bin_ix + 2) % self.Nbins)
-            else:
+                # Therefore in case of bin_ix = 0, the bins to be taken are the ones fullfilling the criteria of cond_x,
+                # which takes the neighbours either in a bin higher than 8 (so 9) 0R in the bins lower than 2 (so 0 and 1).
+            else: # in case the ith bird is in binx between 1 and 8, the neighbours are those simply in [bin_ix-1,bin_ix,bin_ix+1]
                 cond_x = np.logical_and(self.vector[-1][i + 1:, 3] > (bin_ix - 2),
                                         self.vector[-1][i + 1:, 3] < (bin_ix + 2))
-            # print("and condx is",cond_x)
+                # Therefore the condition that they need to fullfill is that their bin coordinate is lower AND higher
+                # than the max and min limits.
+            # Equivalently for the y coordinate
             if bin_iy < 1 or bin_iy > (self.Nbins-2):
                 cond_y = np.logical_or(self.vector[-1][i + 1:, 4] > (bin_iy - 2) % self.Nbins,
                                        self.vector[-1][i + 1:, 4] < (bin_iy + 2) % self.Nbins)
@@ -114,18 +128,20 @@ class Bird():
                 cond_y = np.logical_and(self.vector[-1][i + 1:, 4] > (bin_iy - 2),
                                         self.vector[-1][i + 1:, 4] < (bin_iy + 2))
 
-            cond = np.logical_and(cond_x,cond_y)
+            cond = np.logical_and(cond_x,cond_y) #It should fullfill both the x and y conditions.
 
-            neigh_bins = i+1+np.argwhere(cond)
+            neigh_bins = i+1+np.argwhere(cond) # The indices of the birds in the neighbouring bins are those that
+            # fulfill the conditions (x and y)
 
+            # Now for the birds inside neigh_bins (within a range of +-1 bins) of boid i, their distance with boid i
+            # will be computed and compared to the radius of influence R.
             distance_sq = (np.remainder(self.vector[-1][i,0] - self.vector[-1][neigh_bins,0] + self.L / 2., self.L) - self.L / 2.) ** 2 \
                           + (np.remainder(self.vector[-1][i,0] - self.vector[-1][neigh_bins,0] + self.L / 2., self.L) - self.L / 2.) ** 2
-            indices = np.argwhere(distance_sq < self.R ** 2)
-            indices = neigh_bins[indices] ##This is here because distance_sq is an array with only the distance of the
-            # birds in the neighbouring bins, so when you ask where distance<R it gives you the indices of this neighbouring bins
-            #, so we need to go back to the actual indices of self.vector with neigh_bins
-            Neighbours[i,indices] = self.vector[-1][i,2]
-            Neighbours[indices,i] = self.vector[-1][indices,2]
+            indices = np.argwhere(distance_sq < self.R ** 2) # This are the indices of self.vector[-1][neigh_bins,0]
+            # that are within R of bird i, which means that these indices are indicies of neigh_bins and not of self.vector
+            indices = neigh_bins[indices] # We need to map back the indices from self.vector[-1][neigh_bins,0] to self.vector[-1][:,0]
+            Neighbours[i,indices] = self.vector[-1][i,2] # The birds indices all have neighbour i
+            Neighbours[indices,i] = self.vector[-1][indices,2] # The bird i has neighbours indices
 
         n = np.count_nonzero(~np.isnan(Neighbours),axis=0)
         avg_theta_r_cos = np.nansum(np.cos(Neighbours), axis=0) / n
@@ -138,16 +154,9 @@ class Bird():
         # Absolut value of the average normslized velocity is the order parameter of the system and checking its behaviour determines the phase transition
         v_a = np.sqrt((np.sum(np.cos(self.vector[:,:,2]),axis=1))**2 + (np.sum(np.sin(self.vector[:,:,2]),axis=1))**2)/self.N
         # v_a is an array with Nsteps components, each component is the order parameter for each time step
-        # Also we need the mean value of v_a for each set of initial parameters: If it is equal to 1 it means all the birds fly in the same direction. If it is 0 it means birds fly randomly.
-        # Eliminating values of order parameters in the transient regime, we assumed v_a < 0.5 means system is in transient regime
-        r = v_a[v_a > 0.5]
-        if len(r) != 0:
-            mean_v_a = np.sum(r) / len(r)
-            print('There IS phase transition in the system. Mean v_a is', mean_v_a)
-        # If the system never reaches the phase transition, we take the v_a of the last time step as the mean v_a
-        else:
-            mean_v_a = np.mean(v_a[-6:-1])
-            print('There is NO phase transition in the system. Mean v_a is', mean_v_a)
+        # Also we need the mean value of v_a for each set of initial parameters
+        mean_v_a = np.mean(v_a[-51:-1])
+        print('There is NO phase transition in the system. Mean v_a is', mean_v_a)
         return v_a, mean_v_a
 
 
