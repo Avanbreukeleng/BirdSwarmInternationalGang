@@ -156,7 +156,7 @@ class Bird():
         # v_a is an array with Nsteps components, each component is the order parameter for each time step
         # Also we need the mean value of v_a for each set of initial parameters
         mean_v_a = np.mean(v_a[-51:-1])
-        print('There is NO phase transition in the system. Mean v_a is', mean_v_a)
+        print('Mean v_a is', mean_v_a)
         return v_a, mean_v_a
 
 

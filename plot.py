@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import dill
 import numpy as np
+import main
 
 name = input('Desired file name identification?\t')
 with open('Output_files/' + name + '_pickle_param_swarm.csv',"rb") as pickle_in:  # "rb" because we want to read in binary mode

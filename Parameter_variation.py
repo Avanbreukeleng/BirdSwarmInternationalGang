@@ -1,6 +1,7 @@
 import numpy as np
 from main import Bird
 import dill
+np.set_printoptions(threshold=sys.maxsize)
 
 dill.settings['recurse'] = True  # Enable recursive pickling
 dill.settings['protocol'] = -1   # Use the highest available protocol
@@ -31,13 +32,19 @@ class ParameterModifier:
 #For scaling: density rho 4.16
 # (seed, vel, N, R, L, eta, dt, Nstep)
 # How to use ParameterModifier:
-inparam = np.array([1, 0.033, 400, 1, 10, 1.5, 1, 1000])  # first set of parameters
+inparam = np.array([1, 0.033, 400, 1, 10, 3, 1, 1000])  # first set of parameters
 parameter_modifier = ParameterModifier(inparam)  # Call the param modifier class
-new_N = np.linspace(10, 4000, num=0) #Here N is the PLnumber of birds
+# new_N = np.linspace(10, 4000, num=0) #Here N is the PLnumber of birds
+# new_N = np.logspace(0,3,50) #Here N is the Anumber of birds
+new_N = np.array([2,    3,    4,    5,    6,    7,    8,    9,   11,
+         13,   14,   17,   19,   22,   25,   29,   33,   38,   43,   49,
+         56,   65,   74,   84,   96,  110,  125,  143,  164,  187,  213,
+        243,  277,  316,  361,  412,  470,  536,  612,  698,  796,  908,
+       1035, 1181, 1347, 1537, 1753, 1999])
 # new_N = np.array([])
 # new_eta = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.3, 1.5, 2.0, 2.5, 3.0])
-new_eta = np.linspace(0,6.3,63)
-#new_eta = np.array([])
+# new_eta = np.linspace(0,6.3,63)
+new_eta = np.array([])
 parameter_modifier.modify_parameters(new_N, new_eta)
 
 resulting_params = parameter_modifier.get_parameters()
@@ -65,7 +72,8 @@ class Bird_Simulator():  # This class' goal is to yield an array [v_a, rho, eta]
             Lset = resulting_params[j, 4]
             rho = Nset / (Lset) ** 2
             eta = resulting_params[j, 5]
-            va, mean_va = Sim1.order_parameter_calculation()  # va is array, meanva = number
+            # va, mean_va = Sim1.order_parameter_calculation()  # va is array, meanva = number
+            va, mean_va = Sim1.va, Sim1.mean_va
             va_matrix.append(va)  # Append the va vector to the list
             local_trans = np.array([[mean_va, rho, eta]])
             self.phase_transition_parameters = np.vstack((self.phase_transition_parameters, local_trans))
@@ -106,5 +114,5 @@ va_matrix = bird_sim.va_matrix
 if SAVE:
     # np.savetxt("Vector1.csv", swarm.vector, delimiter=",")
     name = input('Desired file name identification?\t')
-    with open('Output_files/' + name + 'swarm.csv', 'wb') as pickle_out:
+    with open('New_output_files/' + name + 'swarm.csv', 'wb') as pickle_out:
         dill.dump(bird_sim, pickle_out)
