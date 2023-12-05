@@ -80,8 +80,11 @@ class Bird():
         Neighbours = np.full((self.N, self.N), np.nan)
         np.fill_diagonal(Neighbours, self.vector[-1][:,2]) #Since every bird is its own neighbour
         for i in range(0, self.N-1):
-            distance_sq = (self.vector[-1][i,0] - self.vector[-1][i+1:,0]) ** 2 + (self.vector[-1][i,1] - self.vector[-1][i+1:,1]) ** 2
-            indices = np.argwhere(distance_sq < self.R ** 2)
+            distance_sq = (np.remainder(self.vector[-1][i,0] - self.vector[-1][i+1:,0] + self.L / 2., self.L) - self.L / 2.) ** 2 \
+                          + (np.remainder(self.vector[-1][i,0] - self.vector[-1][i+1:,0] + self.L / 2., self.L) - self.L / 2.) ** 2
+            indices = np.argwhere(distance_sq < self.R ** 2) # This are the indices of self.vector[-1][neigh_bins,0]
+            # distance_sq = (self.vector[-1][i,0] - self.vector[-1][i+1:,0]) ** 2 + (self.vector[-1][i,1] - self.vector[-1][i+1:,1]) ** 2
+            # indices = np.argwhere(distance_sq < self.R ** 2)
             Neighbours[i,i+1+indices] = self.vector[-1][i+1+indices,2]
             Neighbours[i+1+indices,i] = self.vector[-1][i,2]
 
