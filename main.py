@@ -136,7 +136,7 @@ class Bird():
             # Now for the birds inside neigh_bins (within a range of +-1 bins) of boid i, their distance with boid i
             # will be computed and compared to the radius of influence R.
             distance_sq = (np.remainder(self.vector[-1][i,0] - self.vector[-1][neigh_bins,0] + self.L / 2., self.L) - self.L / 2.) ** 2 \
-                          + (np.remainder(self.vector[-1][i,0] - self.vector[-1][neigh_bins,0] + self.L / 2., self.L) - self.L / 2.) ** 2
+                          + (np.remainder(self.vector[-1][i,1] - self.vector[-1][neigh_bins,1] + self.L / 2., self.L) - self.L / 2.) ** 2
             indices = np.argwhere(distance_sq < self.R ** 2) # This are the indices of self.vector[-1][neigh_bins,0]
             # that are within R of bird i, which means that these indices are indicies of neigh_bins and not of self.vector
             indices = neigh_bins[indices] # We need to map back the indices from self.vector[-1][neigh_bins,0] to self.vector[-1][:,0]
@@ -177,16 +177,16 @@ class Bird():
 if __name__ == '__main__':
     seed = 1
     vel = 0.033
-    N = 5000
-    R = 0.1
-    L = 100
-    eta = 0.1
+    N = 5
+    R = 1
+    L = 10
+    eta = 0
     dt = 1
-    Nsteps = 50
+    Nsteps = 1000
     # Run simulation
 
     RUN = True
-    ANIMATE = False
+    ANIMATE = True
     SAVE = False
     READ = False
 
