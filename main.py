@@ -136,7 +136,7 @@ class Bird():
             # Now for the birds inside neigh_bins (within a range of +-1 bins) of boid i, their distance with boid i
             # will be computed and compared to the radius of influence R.
             distance_sq = (np.remainder(self.vector[-1][i,0] - self.vector[-1][neigh_bins,0] + self.L / 2., self.L) - self.L / 2.) ** 2 \
-                          + (np.remainder(self.vector[-1][i,0] - self.vector[-1][neigh_bins,0] + self.L / 2., self.L) - self.L / 2.) ** 2
+                          + (np.remainder(self.vector[-1][i,1] - self.vector[-1][neigh_bins,1] + self.L / 2., self.L) - self.L / 2.) ** 2
             indices = np.argwhere(distance_sq < self.R ** 2) # This are the indices of self.vector[-1][neigh_bins,0]
             # that are within R of bird i, which means that these indices are indicies of neigh_bins and not of self.vector
             indices = neigh_bins[indices] # We need to map back the indices from self.vector[-1][neigh_bins,0] to self.vector[-1][:,0]
@@ -156,13 +156,13 @@ class Bird():
         # v_a is an array with Nsteps components, each component is the order parameter for each time step
         # Also we need the mean value of v_a for each set of initial parameters
         mean_v_a = np.mean(v_a[-51:-1])
-        print('There is NO phase transition in the system. Mean v_a is', mean_v_a)
+        print('Mean v_a is', mean_v_a)
         return v_a, mean_v_a
 
 
     def update(self):
         for i in range(self.Nsteps):  #i is the loop variable of the timestep, hard capped at 10 for now
-            # if i%10 == 0: print(i)
+            if i%10 == 0: print(i)
             self.evolve()
             self.new_theta()
 
@@ -177,12 +177,12 @@ class Bird():
 if __name__ == '__main__':
     seed = 1
     vel = 0.033
-    N = 100
+    N = 5
     R = 1
-    L = 20
-    eta = 1.5
+    L = 10
+    eta = 0
     dt = 1
-    Nsteps = 300
+    Nsteps = 1000
     # Run simulation
 
     RUN = True
