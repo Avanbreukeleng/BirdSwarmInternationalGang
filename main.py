@@ -156,13 +156,14 @@ class Bird():
         # v_a is an array with Nsteps components, each component is the order parameter for each time step
         # Also we need the mean value of v_a for each set of initial parameters
         mean_v_a = np.mean(v_a[-51:-1])
-        print('Mean v_a is', mean_v_a)
+        print('Mean v_a (last 50) is', mean_v_a)
+        print('Mean v_a (last 100) is', np.mean(v_a[-101:-1]))
         return v_a, mean_v_a
 
 
     def update(self):
         for i in range(self.Nsteps):  #i is the loop variable of the timestep, hard capped at 10 for now
-            if i%10 == 0: print(i)
+            # if i%10 == 0: print(i)
             self.evolve()
             self.new_theta()
 
