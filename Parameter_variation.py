@@ -114,5 +114,5 @@ va_matrix = bird_sim.va_matrix
 if SAVE:
     # np.savetxt("Vector1.csv", swarm.vector, delimiter=",")
     name = input('Desired file name identification?\t')
-    with open('New_output_files/' + name + 'fixeta_swarm.csv', 'wb') as pickle_out:
+    with open('New_output_files/' + name + '_fixeta_swarm.csv', 'wb') as pickle_out:
         dill.dump(bird_sim, pickle_out)
