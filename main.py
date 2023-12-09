@@ -11,7 +11,7 @@ import matplotlib.animation as animation
 import matplotlib.cm as cm
 
 import time
-
+import requests
 
 # from Parameter_variation import *
 
@@ -178,16 +178,17 @@ class Bird():
 if __name__ == '__main__':
     seed = 1
     vel = 0.033
-    N = 5
+    N = 300
     R = 1
-    L = 10
-    eta = 0
+    L = 25
+    eta = 0.1
     dt = 1
-    Nsteps = 1000
+    Nsteps = 300
     # Run simulation
 
     RUN = True
     ANIMATE = True
+
     SAVE = False
     READ = False
 
@@ -224,8 +225,8 @@ if __name__ == '__main__':
                 swarm.vector[i][:, 1],  # y-coordinates
                 np.cos(swarm.vector[i][:, 2]),  # cos(theta) as x-component of arrow
                 np.sin(swarm.vector[i][:, 2]),  # sin(theta) as y-component of arrow
-                scale = 1,
-                width = R/L/2,
+                scale = 2, #1
+                width = 1/7/50,#R/L/2
                 scale_units = 'xy',  # use the same scale for x and y directions
                 color = cm.twilight(colors / (2 * np.pi)),
                 # Here we use the circular color map twilight to assign a color to the bird's directions
@@ -237,8 +238,16 @@ if __name__ == '__main__':
 
 
         fig, ax = plt.subplots()
-        bird_animation = animation.FuncAnimation(fig, make_step, frames=Nsteps, interval=1, blit=False)
+        bird_animation = animation.FuncAnimation(fig, make_step, frames=Nsteps, interval=50, blit=False)
+
+        gif_filename = 'Animations/N300_L25_eta01_first_test.gif'
+        writer = animation.PillowWriter(fps=20)  # You can adjust the fps as needed
+
+        # Save the animation as a GIF
+        bird_animation.save(gif_filename, writer=writer)
+
         plt.show()
+
 
 
 
