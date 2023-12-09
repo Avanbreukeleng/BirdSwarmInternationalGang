@@ -240,11 +240,11 @@ if __name__ == '__main__':
         fig, ax = plt.subplots()
         bird_animation = animation.FuncAnimation(fig, make_step, frames=Nsteps, interval=50, blit=False)
 
-        gif_filename = 'Animations/N300_L25_eta01_first_test.gif'
-        writer = animation.PillowWriter(fps=20)  # You can adjust the fps as needed
+        # gif_filename = 'Animations/N300_L25_eta01_first_test.gif'
+        # writer = animation.PillowWriter(fps=20)  # You can adjust the fps as needed
 
-        # Save the animation as a GIF
-        bird_animation.save(gif_filename, writer=writer)
+        ### Save the animation as a GIF
+        # bird_animation.save(gif_filename, writer=writer)
 
         plt.show()
 
