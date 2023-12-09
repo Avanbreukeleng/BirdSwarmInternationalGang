@@ -29,7 +29,7 @@ class ParameterModifier:
 inparam = np.array([1, 0.033, 10, 1, 10, np.pi/4, 1, 10]) #first set of parameters
 parameter_modifier = ParameterModifier(inparam) #Call the param modifier class
 new_N = np.linspace(10, 100, num=10)
-new_eta = np.array([0.1, 0.5, 1.0, 2.0])
+new_eta = np.array([])
 parameter_modifier.modify_parameters(new_N, new_eta)
 resulting_params = parameter_modifier.get_parameters()
 print(resulting_params)
@@ -70,7 +70,7 @@ def plot_phase_transition(phase_transition_parameters):
     plt.plot(phase_transition_parameters[:,2],phase_transition_parameters[:,0],'o',color='b')
     plt.show()
 
-PLOT = True
+PLOT = False
 
 
 
