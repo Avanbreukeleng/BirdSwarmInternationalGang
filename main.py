@@ -176,14 +176,14 @@ class Bird():
 
 
 if __name__ == '__main__':
-    seed = 1
+    seed = 0
     vel = 0.033
-    N = 300
+    N = 4000
     R = 1
-    L = 25
-    eta = 0.1
+    L = 31.6
+    eta = 0.91451613
     dt = 1
-    Nsteps = 300
+    Nsteps = 600
     # Run simulation
 
     RUN = True
@@ -238,13 +238,13 @@ if __name__ == '__main__':
 
 
         fig, ax = plt.subplots()
-        bird_animation = animation.FuncAnimation(fig, make_step, frames=Nsteps, interval=50, blit=False)
+        bird_animation = animation.FuncAnimation(fig, make_step, frames=Nsteps, interval=20, blit=False)
 
-        # gif_filename = 'Animations/N300_L25_eta01_first_test.gif'
-        # writer = animation.PillowWriter(fps=20)  # You can adjust the fps as needed
+        gif_filename = 'Animations/N4000_L316_eta09_seed0_outlier_study.gif'
+        writer = animation.PillowWriter(fps=20)  # You can adjust the fps as needed
 
         ### Save the animation as a GIF
-        # bird_animation.save(gif_filename, writer=writer)
+        bird_animation.save(gif_filename, writer=writer)
 
         plt.show()
 

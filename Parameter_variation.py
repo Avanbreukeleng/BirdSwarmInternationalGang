@@ -34,7 +34,7 @@ class ParameterModifier:
 #For scaling: density rho 4.16
 # (seed, vel, N, R, L, eta, dt, Nstep)
 # How to use ParameterModifier:
-inparam = np.array([1, 0.033, 2, 1, 20, 1, 1, 100])  # first set of parameters
+inparam = np.array([1, 0.033, 2, 1, 20, 1, 1, 500])  # first set of parameters
 parameter_modifier = ParameterModifier(inparam)  # Call the param modifier class
 # new_N = np.linspace(10, 4000, num=0) #Here N is the PLnumber of birds
 # new_N = np.logspace(0,3,50) #Here N is the Anumber of birds
@@ -43,7 +43,7 @@ parameter_modifier = ParameterModifier(inparam)  # Call the param modifier class
 #          56,   65,   74,   84,   96,  110,  125,  143,  164,  187,  213,
 #         243,  277,  316,  361,  412,  470])
 # new_N = np.array([3000,4000])
-new_N = np.array([2,    3,    4,    5,    6,    7,    8,    9,   11,
+new_N = np.array([3,    4,    5,    6,    7,    8,    9,   11,
          13,   14,   17,   19,   22,   25,   29,   33,   38,   43,   49,
          56,   65,   74,   84,   96,  110,  125,  143,  164,  187,  213,
         243,  277,  316,  361,  412,  470,  536,  612,  698,  796,  908,
@@ -69,6 +69,7 @@ class Bird_Simulator():  # This class' goal is to yield an array [v_a, rho, eta]
     # NOTATION [a,b] a selects the line, b the column
     def run_all_bird(self, resulting_params):
         va_matrix = []  # Initialize an empty list to store va vectors, this has essentially the same purpose as init_phase, but for a different array
+        self.t = np.zeros_like(resulting_params[:, 1])
         for j in range(len(resulting_params[:, 1])):  # this loops over all distinct sets of parameters
             start_time = time.time()
             print(j)
@@ -85,7 +86,9 @@ class Bird_Simulator():  # This class' goal is to yield an array [v_a, rho, eta]
             va_matrix.append(va)  # Append the va vector to the list
             local_trans = np.array([[mean_va, rho, eta]])
             self.phase_transition_parameters = np.vstack((self.phase_transition_parameters, local_trans))
-            print("--- %s seconds ---" % (time.time() - start_time))
+            # print("--- %s seconds ---" % (time.time() - start_time))
+            self.t[j] = (time.time() - start_time)
+        print(repr(self.t))
         self.phase_transition_parameters = np.delete(self.phase_transition_parameters, 0,
                                                      axis=0)  # Delete the first row of the phase_transition_parameters array, which was created in init_phase
         self.matrix_split = np.vsplit(self.phase_transition_parameters,
