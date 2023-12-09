@@ -3,6 +3,7 @@ from main import Bird
 import dill
 import matplotlib.pyplot as plt
 np.set_printoptions(threshold=sys.maxsize)
+import time
 
 dill.settings['recurse'] = True  # Enable recursive pickling
 dill.settings['protocol'] = -1   # Use the highest available protocol
@@ -33,7 +34,7 @@ class ParameterModifier:
 #For scaling: density rho 4.16
 # (seed, vel, N, R, L, eta, dt, Nstep)
 # How to use ParameterModifier:
-inparam = np.array([1, 0.033, 2, 1, 20, 4, 1, 1000])  # first set of parameters
+inparam = np.array([1, 0.033, 2, 1, 20, 1, 1, 100])  # first set of parameters
 parameter_modifier = ParameterModifier(inparam)  # Call the param modifier class
 # new_N = np.linspace(10, 4000, num=0) #Here N is the PLnumber of birds
 # new_N = np.logspace(0,3,50) #Here N is the Anumber of birds
@@ -69,9 +70,10 @@ class Bird_Simulator():  # This class' goal is to yield an array [v_a, rho, eta]
     def run_all_bird(self, resulting_params):
         va_matrix = []  # Initialize an empty list to store va vectors, this has essentially the same purpose as init_phase, but for a different array
         for j in range(len(resulting_params[:, 1])):  # this loops over all distinct sets of parameters
+            start_time = time.time()
             print(j)
             Pset = resulting_params[j, :]
-            # print("Pset",Pset)
+            print("Pset",Pset)
             Sim1 = Bird(int(Pset[0]), Pset[1], int(Pset[2]), Pset[3], Pset[4], Pset[5], Pset[6],
                         int(Pset[7]))  # This is not elegant but it works
             Nset = resulting_params[j, 2]
@@ -83,6 +85,7 @@ class Bird_Simulator():  # This class' goal is to yield an array [v_a, rho, eta]
             va_matrix.append(va)  # Append the va vector to the list
             local_trans = np.array([[mean_va, rho, eta]])
             self.phase_transition_parameters = np.vstack((self.phase_transition_parameters, local_trans))
+            print("--- %s seconds ---" % (time.time() - start_time))
         self.phase_transition_parameters = np.delete(self.phase_transition_parameters, 0,
                                                      axis=0)  # Delete the first row of the phase_transition_parameters array, which was created in init_phase
         self.matrix_split = np.vsplit(self.phase_transition_parameters,
@@ -94,6 +97,7 @@ class Bird_Simulator():  # This class' goal is to yield an array [v_a, rho, eta]
         self.va_matrix = np.delete(self.va_matrix, 0,
                                    axis=0)  # Delete the first row, which was created with an empty list
 
+
     def get_N_matrix(self):
         return self.N_matrix
 
@@ -104,7 +108,7 @@ class Bird_Simulator():  # This class' goal is to yield an array [v_a, rho, eta]
         return self.va_matrix
 
 
-SAVE = True
+SAVE = False
 
 
 # How to use Run_all birds

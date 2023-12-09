@@ -202,7 +202,7 @@ if __name__ == '__main__':
     if SAVE:
         # np.savetxt("Vector1.csv", swarm.vector, delimiter=",")
         name = input('Desired file name identification?\t')
-        with open('Output_files/' + name + '_pickle_swarm.csv', 'wb') as pickle_out:
+        with open('New_output_files/' + name + '_pickle_swarm.csv', 'wb') as pickle_out:
             pickle.dump(swarm, pickle_out)
 
     if READ:
