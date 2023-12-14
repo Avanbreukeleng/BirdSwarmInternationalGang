@@ -4,16 +4,16 @@ import numpy as np
 import main
 
 name = input('Desired file name identification?\t')
-with open('Output_files/' + name + '_pickle_param_swarm.csv',"rb") as pickle_in:  # "rb" because we want to read in binary mode
+with open('Old_Output_files/' + name + '_pickle_param_swarm.csv',"rb") as pickle_in:  # "rb" because we want to read in binary mode
     bird_sim1 = dill.load(pickle_in)
 name = input('Desired file name identification?\t')
-with open('Output_files/' + name + '_pickle_param_swarm.csv',"rb") as pickle_in:
+with open('Old_Output_files/' + name + '_pickle_param_swarm.csv',"rb") as pickle_in:
     bird_sim2 = dill.load(pickle_in)
 name = input('Desired file name identification?\t')
-with open('Output_files/' + name + '_pickle_param_swarm.csv',"rb") as pickle_in:
+with open('Old_Output_files/' + name + '_pickle_param_swarm.csv',"rb") as pickle_in:
     bird_sim3 = dill.load(pickle_in)
 name = input('Desired file name identification?\t')
-with open('Output_files/' + name + '_pickle_param_swarm.csv',"rb") as pickle_in:
+with open('Old_Output_files/' + name + '_pickle_param_swarm.csv',"rb") as pickle_in:
     bird_sim4 = dill.load(pickle_in)
 
 
