@@ -214,7 +214,7 @@ if __name__ == '__main__':
                 np.cos(swarm.vector[i][:, 2]),  # cos(theta) as x-component of arrow
                 np.sin(swarm.vector[i][:, 2]),  # sin(theta) as y-component of arrow
                 scale = 2, #1 #Set to 1 in case of L large (more than 20), and to 2 in case of L small
-                width = 1/7/50,#R/L/2 # use the second the width R/L/2 if one would like to scale the size of the arrows with their size relative to the box
+                width = 1/7/50,#R/L/50 # use the second width R/L/2 if one would like to scale the size of the arrows with their size relative to the box
                 scale_units = 'xy',  # use the same scale for x and y directions
                 color = cm.twilight(colors / (2 * np.pi)),
                 # Here we use the circular color map twilight to assign a color to the bird's directions
