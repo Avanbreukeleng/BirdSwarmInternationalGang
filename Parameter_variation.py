@@ -1,11 +1,11 @@
 import numpy as np
 from main import Bird
 import dill
-import matplotlib.pyplot as plt
-np.set_printoptions(threshold=sys.maxsize)
 import time
+import matplotlib.pyplot as plt
+#np.set_printoptions(threshold=sys.maxsize) fixes an error on Alejandro's computer, should not be necessary
 
-dill.settings['recurse'] = True  # Enable recursive pickling
+dill.settings['recurse'] = True  # Enables recursive pickling
 dill.settings['protocol'] = -1   # Use the highest available protocol
 
 
@@ -18,82 +18,66 @@ class ParameterModifier:
         self.parameters = np.array([inparam])
 
     def modify_parameters(self, new_N, new_eta):
-        for i in range(len(new_N)):
-            modified_parameters = np.copy(self.parameters[-1])  # Copy the last row
+        for i in range(len(new_N)):  # Creates a new parameter set with modified N and add it to the array of all parameter sets
+            modified_parameters = np.copy(self.parameters[-1])
             modified_parameters[2] = new_N[i]
             self.parameters = np.vstack((self.parameters, modified_parameters))
 
-        for j in range(len(new_eta)):
-            modified_parameters = np.copy(self.parameters[-1])  # Copy the last row
+        for j in range(len(new_eta)): # Creates a new parameter set with modified eta and add it to the array of all parameter sets
+            modified_parameters = np.copy(self.parameters[-1])
             modified_parameters[5] = new_eta[j]
             self.parameters = np.vstack((self.parameters, modified_parameters))
 
     def get_parameters(self):
         return self.parameters
 
-#For scaling: density rho 4.16
-# (seed, vel, N, R, L, eta, dt, Nstep)
+#For scaling: density rho = 4
 # How to use ParameterModifier:
-inparam = np.array([1, 0.033, 2, 1, 20, 1, 1, 500])  # first set of parameters
-parameter_modifier = ParameterModifier(inparam)  # Call the param modifier class
-# new_N = np.linspace(10, 4000, num=0) #Here N is the PLnumber of birds
-# new_N = np.logspace(0,3,50) #Here N is the Anumber of birds
-# new_N = np.array([2,    3,    4,    5,    6,    7,    8,    9,   11,
-#          13,   14,   17,   19,   22,   25,   29,   33,   38,   43,   49,
-#          56,   65,   74,   84,   96,  110,  125,  143,  164,  187,  213,
-#         243,  277,  316,  361,  412,  470])
-# new_N = np.array([3000,4000])
-new_N = np.array([3,    4,    5,    6,    7,    8,    9,   11,
-         13,   14,   17,   19,   22,   25,   29,   33,   38,   43,   49,
-         56,   65,   74,   84,   96,  110,  125,  143,  164,  187,  213,
-        243,  277,  316,  361,  412,  470,  536,  612,  698,  796,  908,
-       1035, 1181, 1347, 1537, 1753, 1999])
-# new_N = np.array([])
-# new_eta = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.3, 1.5, 2.0, 2.5, 3.0])
-# new_eta = np.linspace(0,6.3,63)
-new_eta = np.array([])
+inparam = np.array([1, 0.033, 2, 1, 20, 1, 1, 500])  # first define a set of parameters, # (seed, vel, N, R, L, eta, dt, Nstep)
+# new sets will be based on this inital one, with different values of eta or N
+parameter_modifier = ParameterModifier(inparam)  # Calls the param modifier class
+new_N = np.array([]) # If the number of birds should stay constant, just use an empty array
+# new_N = np.linspace(10, 4000, num=0) # Here N is the number of birds
+new_eta = np.linspace(0,6.3,63) # Eta is the noise
 parameter_modifier.modify_parameters(new_N, new_eta)
-
-resulting_params = parameter_modifier.get_parameters()
-# print(resulting_params)
-# End of using ParameterModifier
-# Run simulation
-
-init_phase = np.array([[1, 2, 3]])  # Initialize the phase trans parameter array to be able to stack other arrays on it.
+resulting_params = parameter_modifier.get_parameters() #Calls the final array of all inital parameters
 
 
-class Bird_Simulator():  # This class' goal is to yield an array [v_a, rho, eta] to use for the phase transition analysis
+
+
+#Now the second class: Bird_Simulator
+init_phase = np.array([[1, 2, 3]])  # Initialize the phase transition parameter array to be able to stack other arrays on it.
+
+class Bird_Simulator():  # This class' goal is to yield an array of [v_a, rho, eta] values to use for the phase transition analysis
     def __init__(self, init_phase):
         self.phase_transition_parameters = init_phase
 
-    # NOTATION [a,b] a selects the line, b the column
+    # NOTATION [a,b] a selects the row (individual parameter set), b selects the column (# of the paramter set)
     def run_all_bird(self, resulting_params):
         va_matrix = []  # Initialize an empty list to store va vectors, this has essentially the same purpose as init_phase, but for a different array
         self.t = np.zeros_like(resulting_params[:, 1])
-        for j in range(len(resulting_params[:, 1])):  # this loops over all distinct sets of parameters
+        for j in range(len(resulting_params[:, 1])):  # This loops over all distinct sets of parameters
             start_time = time.time()
-            print(j)
+            print(j) # useful check to see what parameter set is currently being run, and that there are no infinite loops
             Pset = resulting_params[j, :]
             print("Pset",Pset)
             Sim1 = Bird(int(Pset[0]), Pset[1], int(Pset[2]), Pset[3], Pset[4], Pset[5], Pset[6],
-                        int(Pset[7]))  # This is not elegant but it works
+                        int(Pset[7]))  # The number of birds and timestep must be an integer
             Nset = resulting_params[j, 2]
             Lset = resulting_params[j, 4]
             rho = Nset / (Lset) ** 2
             eta = resulting_params[j, 5]
-            # va, mean_va = Sim1.order_parameter_calculation()  # va is array, meanva = number
-            va, mean_va = Sim1.va, Sim1.mean_va
+            va, mean_va = Sim1.va, Sim1.mean_va # va is an array, mean_va = number
             va_matrix.append(va)  # Append the va vector to the list
             local_trans = np.array([[mean_va, rho, eta]])
             self.phase_transition_parameters = np.vstack((self.phase_transition_parameters, local_trans))
-            # print("--- %s seconds ---" % (time.time() - start_time))
             self.t[j] = (time.time() - start_time)
         print(repr(self.t))
         self.phase_transition_parameters = np.delete(self.phase_transition_parameters, 0,
                                                      axis=0)  # Delete the first row of the phase_transition_parameters array, which was created in init_phase
         self.matrix_split = np.vsplit(self.phase_transition_parameters,
                                       [len(new_N) + 1])  # This splits the transition parameter array into two arrays,
-        # one with constant eta and varying N, and one with constant N and varying eta
+                                                                          # one with constant eta and varying N, and one with constant N and varying eta
         self.N_matrix = self.matrix_split[0]
         self.eta_matrix = self.matrix_split[1]
         self.va_matrix = np.array(va_matrix)  # Convert the list to a numpy array
@@ -110,10 +94,6 @@ class Bird_Simulator():  # This class' goal is to yield an array [v_a, rho, eta]
     def get_va_matrix(self):
         return self.va_matrix
 
-
-SAVE = False
-
-
 # How to use Run_all birds
 # Has to be used after the Parameter Modifier Class, so that resulting_params is defined
 init_phase = np.array([[1, 2, 3]])  # Initialize the phase trans parameter array to be able to stack other arrays on it.
@@ -124,6 +104,7 @@ N_matrix = bird_sim.N_matrix
 eta_matrix = bird_sim.eta_matrix
 va_matrix = bird_sim.va_matrix
 
+SAVE = False
 if SAVE:
     # np.savetxt("Vector1.csv", swarm.vector, delimiter=",")
     name = input('Desired file name identification?\t')
