@@ -15,8 +15,8 @@ The code is written from scratch but the physics and algorithms used throughout 
   Institut Polytechnique de Paris
   
 Some additional considerations:
-Plotting functions and data analysis are contained within the Jupyter notebooks, while the main animation and production codes are left as .py files.
-Please ensure that you download the New_output_files folder in order to run the Jupyter notebooks.
+Plotting functions and data analysis are contained within a Jupyter notebooks contained in the New_output_files folder, while the main animation and production codes are left as .py files.
+Please ensure that you download the New_output_files folder in order to run our plotting notebook.
 A report of our methods and results is included as a pdf file.
 
 
