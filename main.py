@@ -158,6 +158,8 @@ class Bird():
         mean_v_a = np.mean(v_a[-51:-1])
         print('Mean v_a (last 50) is', mean_v_a)
         print('Mean v_a (last 100) is', np.mean(v_a[-101:-1]))
+        plt.plot(v_a)
+        plt.show()
         return v_a, mean_v_a
 
 
@@ -173,21 +175,21 @@ class Bird():
         #Timestep = i
         #print(Timestep)
         #break
-
+a = 1
 
 if __name__ == '__main__':
-    seed = 0
+    seed = 1
     vel = 0.033
-    N = 4000
+    N = 800
     R = 1
-    L = 31.6
-    eta = 0.91451613
+    L = 20
+    eta = 3
     dt = 1
-    Nsteps = 600
+    Nsteps = 1000
     # Run simulation
 
     RUN = True
-    ANIMATE = True
+    ANIMATE = False
 
     SAVE = False
     READ = False
@@ -238,13 +240,13 @@ if __name__ == '__main__':
 
 
         fig, ax = plt.subplots()
-        bird_animation = animation.FuncAnimation(fig, make_step, frames=Nsteps, interval=20, blit=False)
+        bird_animation = animation.FuncAnimation(fig, make_step, frames=Nsteps, interval=5, blit=False)
 
-        gif_filename = 'Animations/N4000_L316_eta09_seed0_outlier_study.gif'
-        writer = animation.PillowWriter(fps=20)  # You can adjust the fps as needed
+        # gif_filename = 'Animations/N400_L10_eta3_comparison.gif'
+        # writer = animation.PillowWriter(fps=20)  # You can adjust the fps as needed
 
         ### Save the animation as a GIF
-        bird_animation.save(gif_filename, writer=writer)
+        # bird_animation.save(gif_filename, writer=writer)
 
         plt.show()
 
