@@ -16,11 +16,6 @@ import requests
 # from Parameter_variation import *
 
 # import pickle
-# from objects.assembly import Assembly
-# from objects.mesh import Mesh
-# from objects.element import Element
-
-# from structure import geometry
 
     # =============================================================================
     #  PHY571 Numerical Physics Project
@@ -44,7 +39,6 @@ class Bird():
         np.random.seed(seed)
         posvector = L*np.random.rand(N, 2)
         theta = np.random.uniform(0, 2*np.pi,(N,1))
-        # print(theta)
         vector = np.hstack((posvector, theta))
         vector = np.hstack((vector, np.zeros_like(theta)))
         vector = np.hstack((vector, np.zeros_like(theta)))
@@ -53,8 +47,6 @@ class Bird():
 
     """NOTATION: VECTOR[STEP][NBIRD,XYZBxBy]"""
     # the columns go as follows: X, Y , THETA (angle of boid with respect to horizontal), BIN (bin coordinate of boids position (bx,by))
-
-    """NOTATION: VECTOR[STEP][NBIRD,XYZ]"""
     
     def __init__(self,seed,vel,N,R,L,eta,dt,Nsteps):
         self.vector = self.init_vector(int(seed),int(N),L)   # This is the NStepsx3 array that stores x,y and theta value at each step
@@ -64,14 +56,14 @@ class Bird():
         self.L = L                                           # Size of the world
         self.eta = eta                                       # Interval of noise in theta
         self.dt = dt                                         # Constant time step
-        self.N = N
-        self.Nsteps = Nsteps
-        self.Lbins = L/int(L/R)
+        self.N = N                                           # Number of particles
+        self.Nsteps = Nsteps                                 # Number of timesteps
+        self.Lbins = L/int(L/R)                              # Length of each bin
 
         #self.rho = self.N/(self.L)**2
         self.Nbins = int(self.L/self.Lbins) #There are Nbins**2. But each bird has a x and y coordinate bin: their
                                             # number ranging from 0 to Nbin-1
-        self.update()
+        self.update()                       # Runs code step after step and updates self.vector
 
     def bin_update(self): #This function does not change the bins themselves, but tracks which birds are in which bin
         dummy = self.vector[-1][:,0:2]/self.Lbins
@@ -146,7 +138,7 @@ class Bird():
         n = np.count_nonzero(~np.isnan(Neighbours),axis=0)
         avg_theta_r_cos = np.nansum(np.cos(Neighbours), axis=0) / n
         avg_theta_r_sin = np.nansum(np.sin(Neighbours), axis=0) / n
-        theta_avg_r = np.arctan2(avg_theta_r_sin, avg_theta_r_cos) ### WARNING arctan2 gives 0 or pi in the case of two exactly opposite thetas
+        theta_avg_r = np.arctan2(avg_theta_r_sin, avg_theta_r_cos) ### WARNING arctan2 gives 0 (or pi) in the case of two exactly opposite thetas
         self.vector[-1][:,2] = theta_avg_r + np.random.uniform(-self.eta / 2, self.eta / 2, size=np.size(theta_avg_r))
 
 
@@ -157,9 +149,8 @@ class Bird():
         # Also we need the mean value of v_a for each set of initial parameters
         mean_v_a = np.mean(v_a[-51:-1])
         print('Mean v_a (last 50) is', mean_v_a)
-        print('Mean v_a (last 100) is', np.mean(v_a[-101:-1]))
-        plt.plot(v_a)
-        plt.show()
+        # plt.plot(v_a) #Uncomment this line in case one would like to see va over timestep
+        # plt.show()
         return v_a, mean_v_a
 
 
@@ -169,27 +160,22 @@ class Bird():
             self.evolve()
             self.new_theta()
 
-        #TODO Lastly, check if the dispersion of average theta is close to the noise ;
         self.va , self.mean_va = self.order_parameter_calculation()
-        #if dispersion in range()
-        #Timestep = i
-        #print(Timestep)
-        #break
-a = 1
 
 if __name__ == '__main__':
     seed = 1
     vel = 0.033
-    N = 800
+    N = 100
     R = 1
-    L = 20
-    eta = 3
+    L = 10
+    eta = 1
     dt = 1
-    Nsteps = 1000
+    Nsteps = 100
     # Run simulation
 
     RUN = True
-    ANIMATE = False
+    ANIMATE = True #Animate dynamics of particles
+    GIF = False # Save animation in gif?
 
     SAVE = False
     READ = False
@@ -198,20 +184,20 @@ if __name__ == '__main__':
     if RUN:
         swarm = Bird(seed,vel,N,R,L,eta,dt,Nsteps)
     print("--- %s seconds ---" % (time.time() - start_time))
-    # Plots and animations:
-    # Set to True to animate swarm motion
+
 
     if SAVE:
-        # np.savetxt("Vector1.csv", swarm.vector, delimiter=",")
         name = input('Desired file name identification?\t')
         with open('New_output_files/' + name + '_pickle_swarm.csv', 'wb') as pickle_out:
             pickle.dump(swarm, pickle_out)
 
     if READ:
         name = input('Desired file name identification?\t')
-        with open('Output_files/' + name + '_pickle_swarm.csv', "rb") as pickle_in:  # "rb" because we want to read in binary mode
+        with open('New_Output_files/' + name + '_pickle_swarm.csv', "rb") as pickle_in:  # "rb" because we want to read in binary mode
             swarm = pickle.load(pickle_in)
 
+    # Plots and animations:
+    # Set to True to animate swarm motion
     if ANIMATE:
         def make_step(i):  # New animation with arrows and color, for old dot-only check version of git prior to  nov 28
             ax.clear()  # Clear the previous frame
@@ -227,8 +213,8 @@ if __name__ == '__main__':
                 swarm.vector[i][:, 1],  # y-coordinates
                 np.cos(swarm.vector[i][:, 2]),  # cos(theta) as x-component of arrow
                 np.sin(swarm.vector[i][:, 2]),  # sin(theta) as y-component of arrow
-                scale = 2, #1
-                width = 1/7/50,#R/L/2
+                scale = 2, #1 #Set to 1 in case of L large (more than 20), and to 2 in case of L small
+                width = 1/7/50,#R/L/2 # use the second the width R/L/2 if one would like to scale the size of the arrows with their size relative to the box
                 scale_units = 'xy',  # use the same scale for x and y directions
                 color = cm.twilight(colors / (2 * np.pi)),
                 # Here we use the circular color map twilight to assign a color to the bird's directions
@@ -241,32 +227,12 @@ if __name__ == '__main__':
 
         fig, ax = plt.subplots()
         bird_animation = animation.FuncAnimation(fig, make_step, frames=Nsteps, interval=5, blit=False)
-
-        # gif_filename = 'Animations/N400_L10_eta3_comparison.gif'
-        # writer = animation.PillowWriter(fps=20)  # You can adjust the fps as needed
-
-        ### Save the animation as a GIF
-        # bird_animation.save(gif_filename, writer=writer)
-
+        if GIF:
+            gif_filename = input('Desired GIF file name identification?\t')
+            writer = animation.PillowWriter(fps=20)
+            ## Save the animation as a GIF
+            bird_animation.save('Animations/'+gif_filename+'.gif', writer=writer)
         plt.show()
-
-
-
-
-    # if ANIMATE:
-    #     def make_step(i):
-    #         # swarm.step(dt)
-    #         # line = ax.quiver(swarm.vector[i][:,0:1],np.cos(swarm.vector[i][:,2]),np.sin(swarm.vector[i][:,2]))
-    #         line.set_data(swarm.vector[i][:, 0], swarm.vector[i][:, 1])
-    #         return line
-    #
-    #     fig = plt.figure()
-    #     ax = fig.add_subplot(111, aspect='equal')
-    #     line, = ax.plot([], [],'o', ms=R/L*100)
-    #     ax.set_xlim(0, L)
-    #     ax.set_ylim(0, L)
-    #     bird_animation = animation.FuncAnimation(fig, make_step, frames=Nsteps, interval=50, blit=False)
-    #     plt.show()
 
     # Create input geometry from TOML file
     # inp = geometry('values.toml')
