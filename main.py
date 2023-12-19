@@ -21,10 +21,9 @@ import requests
     #  PHY571 Numerical Physics Project
     # =============================================================================
     # ============================Start of preamble================================
-    # This Python-function belongs to the PHY571 Numerical Physics Project. The file contains a function that
-    # calculates dynamics of a swarm of interacting boids specified by the user
-    #
-    # The function uses a TOML file as input and returns a dictionary as output.
+    # This Python-function belongs to the PHY571 Numerical Physics Project. The file 
+    # contains a function that calculates the dynamics of a swarm of interacting 
+    # boids specified by the user
     #
     # Written by Pierre-Louis Wasmer, Fatemeh Nouri and Alejandro van Breukelen García,
     # M1 Physics
